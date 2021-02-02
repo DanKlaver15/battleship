@@ -25,7 +25,12 @@ class Game {
 	}
 
 	runGame() {
-		this.playerAdd();
+		console.log("Welcome to the game of Battleship!");
+		console.log("Player 1, please enter your name.");
+		this.playerOne = new Player(prompt());
+		console.log("Player 2, please enter your name.");
+		this.playerTwo = new Player(prompt());
+		console.log("Welcome " + this.playerOne.name + " and " + this.playerTwo.name);
 
 		this.displayRules();
 
@@ -33,15 +38,16 @@ class Game {
 		let player1Board = this.generateGameBoard();
 		let player2Board = this.generateGameBoard();
 
-	}
+		let player1Carrier = this.placeCarrier(this.playerOne);
+		let player1Battleship = this.placeBattleship(this.playerOne);
+		let player1Submarine = this.placeSubmarine(this.playerOne);
+		let player1Destroyer = this.placeDestroyer(this.playerOne);
 
-	playerAdd() {
-		console.log("Welcome to the game of Battleship!");
-		console.log("Player 1, please enter your name.");
-		this.playerOne = new Player(prompt());
-		console.log("Player 2, please enter your name.");
-		this.playerTwo = new Player(prompt());
-		console.log("Welcome " + this.playerOne.name + " and " + this.playerTwo.name);
+		let player2Carrier = this.placeCarrier(this.playerTwo);
+		let player2Battleship = this.placeBattleship(this.playerTwo);
+		let player2Submarine = this.placeSubmarine(this.playerTwo);
+		let player2Destroyer = this.placeDestroyer(this.playerTwo);
+
 	}
 
 	displayRules() {
@@ -69,15 +75,32 @@ class Game {
 		return gameBoard;
 	}
 
-	placeShips(player) {
+	placeCarrier(player) {
+		let carrierLocation = [];
 		console.log(player.name + " please choose the first space for your AIRCRAFT CARRIER(5 spaces total) using the format 'A1' where the capital letter is the row and the number is the column.");
+		carrierLocation.push(this.validateSpace(prompt()));
+		return carrierLocation;
+	}
 
+	placeBattleship(player) {
+		let battleshipLocation = [];
 		console.log(player.name + " please choose the first space for your BATTLESHIP(4 spaces total) using the format 'A1' where the capital letter is the row and the number is the column.");
+		battleshipLocation.push(this.validateSpace(prompt()));
+		return battleshipLocation;
+	}
 
+	placeSubmarine(player) {
+		let submarineLocation = [];
 		console.log(player.name + " please choose the first space for your SUBMARINE(3 spaces total) using the format 'A1' where the capital letter is the row and the number is the column.");
+		submarineLocation.push(this.validateSpace(prompt()));
+		return submarineLocation;
+	}
 
+	placeDestroyer(player) {
+		let destroyerLocation = [];
 		console.log(player.name + " please choose the first space for your DESTROYER(2 spaces total) using the format 'A1' where the capital letter is the row and the number is the column.");
-
+		destroyerLocation.push(this.validateSpace(prompt()));
+		return destroyerLocation;
 	}
 
 	validateSpace(space) {
