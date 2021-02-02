@@ -1,6 +1,8 @@
 "use strict";
 
 const prompt = require("prompt-sync")();
+const player = require("./player.js");
+const Player = player.Player;
 const destroyer = require("./destroyer.js");
 const Destroyer = destroyer.Destroyer;
 const submarine = require("./submarine.js");
@@ -8,7 +10,7 @@ const Submarine = submarine.Submarine;
 const battleship = require("./battleship.js");
 const Battleship = battleship.Battleship;
 const carrier = require("./carrier.js");
-const Carrier = carrier.carrier;
+const Carrier = carrier.Carrier;
 
 /*====================================================================*/
 
@@ -22,6 +24,14 @@ class Game {
 		this.ships.push(new Carrier());
 	}
 
+	runGame() {
+
+	}
+
+	displayRules() {
+		console.log("Welcome to the game of Battleship!");
+		console.log("")
+	}
 
 
 
@@ -31,7 +41,10 @@ class Game {
 
 
 
+}
 
+/*====================================================================*/
 
-
+module.exports = {
+   Game: Game
 }
