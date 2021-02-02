@@ -29,7 +29,9 @@ class Game {
 
 		this.displayRules();
 
-		console.log(this.generateGameBoard());
+		console.table(this.generateGameBoard());
+		let player1Board = this.generateGameBoard();
+		let player2Board = this.generateGameBoard();
 
 	}
 
@@ -39,7 +41,7 @@ class Game {
 		this.playerOne = new Player(prompt());
 		console.log("Player 2, please enter your name.");
 		this.playerTwo = new Player(prompt());
-		console.log("Welcome " + this.playerOne.name + "and " + this.playerTwo.name);
+		console.log("Welcome " + this.playerOne.name + " and " + this.playerTwo.name);
 	}
 
 	displayRules() {
@@ -55,9 +57,7 @@ class Game {
 	generateGameBoard() {
 		let gameBoard = [];
 		let rows = 20;
-		let rowID = "";
 		let columns = 20;
-		let columnID = 1;
 
 		for (let c = 1; c <= columns; c++) {
 			let beginningChar = 65;
@@ -69,11 +69,25 @@ class Game {
 		return gameBoard;
 	}
 
+	placeShips(player) {
+		console.log(player.name + " please choose the first space for your AIRCRAFT CARRIER(5 spaces total) using the format 'A1' where the capital letter is the row and the number is the column.");
 
+		console.log(player.name + " please choose the first space for your BATTLESHIP(4 spaces total) using the format 'A1' where the capital letter is the row and the number is the column.");
 
+		console.log(player.name + " please choose the first space for your SUBMARINE(3 spaces total) using the format 'A1' where the capital letter is the row and the number is the column.");
 
+		console.log(player.name + " please choose the first space for your DESTROYER(2 spaces total) using the format 'A1' where the capital letter is the row and the number is the column.");
 
+	}
 
+	validateSpace(space) {
+		let regex = new RegExp(/^[A-T]([1-9]|[1][1-9]|[2][0])$/);
+		while (!regex.test(space)) {
+			console.log("Your entry is invalid.  Please choose a space that begins with a capital letter A-T followed by a number 1-20.");
+			space = prompt().split("");
+		}
+		return space;
+	}
 
 }
 
