@@ -25,12 +25,29 @@ class Game {
 	}
 
 	runGame() {
+		this.playerAdd();
+
+		this.displayRules();
 
 	}
 
-	displayRules() {
+	playerAdd() {
 		console.log("Welcome to the game of Battleship!");
-		console.log("")
+		console.log("Player 1, please enter your name.");
+		this.playerOne = new Player(prompt());
+		console.log("Player 2, please enter your name.");
+		this.playerTwo = new Player(prompt());
+		console.log("Welcome " + this.playerOne.name + "and " + this.playerTwo.name);
+	}
+
+	displayRules() {
+		console.log("Please read the following rules carefuly:")
+		console.log(this.playerOne.name + " will be given a chance to position his ships on his or her board first. Please keep in mind that ships may no overlap or extend outside the boundry of the board.");
+		console.log(this.playerTwo.name + " will then also be given a chance to position his or her ships on his board. Please keep in mind that ships may no overlap or extend outside the boundry of the board.");
+		console.log("Once both players have had a chance to position their ships, " + this.playerOne.name + " will then have the opportunity to choose a column followed by a row for the location of his or her first shot.");
+		console.log(this.playerTwo.name + " will then have the same opportunity.");
+		console.log("The game will continue as such until one of the players has sunk all of his or her opponent's ships.");
+		console.log("The first player to sink all of his or her opponent's ships is the winner.");
 	}
 
 
