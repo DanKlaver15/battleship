@@ -10,3 +10,11 @@
 // Console print of the other player's board as they know it showing hits/misses
 // Console print of the current player's board as well with hits/misses
 // Program should keep track of each player's score (number of ships destroyed completely)
+
+/*====================================================================*/
+
+const game = require("./game.js");
+const Game = game.Game;
+
+let newGame = new Game();
+newGame.runGame();
