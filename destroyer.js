@@ -4,8 +4,8 @@ const ship = require("./ship.js");
 const Ship = ship.Ship;
 
 class Destroyer extends Ship {
-	constructor(name, size) {
-		super(name, size);
+	constructor(name, initials, size) {
+		super(name, initials, size);
 	}
 }
 

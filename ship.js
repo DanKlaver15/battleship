@@ -1,8 +1,9 @@
 "use strict";
 
 class Ship {
-	constructor(name, size) {
+	constructor(name, initials, size) {
 		this.name = name;
+		this.initials = initials;
 		this.size = size;
 	}
 }
