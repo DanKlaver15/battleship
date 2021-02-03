@@ -18,10 +18,10 @@ class Game {
 	constructor() {
 		this.ships = [];
 
-		this.ships.push(new Destroyer());
-		this.ships.push(new Submarine());
-		this.ships.push(new Battleship());
-		this.ships.push(new Carrier());
+		this.ships.push(new Destroyer("Destroyer", 2));	// this.ships[3]
+		this.ships.push(new Submarine("Submarine", 3));	// this.ships[3]
+		this.ships.push(new Battleship("Battleship", 4));	// this.ships[3]
+		this.ships.push(new Carrier("Aircraft Carrier", 5));	// this.ships[3]
 	}
 
 	runGame() {
@@ -36,17 +36,21 @@ class Game {
 
 		let player1Board = this.generateGameBoard();
 		let player2Board = this.generateGameBoard();
-		this.displayGameBoard(player1Board);
 
-		let player1Carrier = this.placeCarrier(this.playerOne);
-		let player1Battleship = this.placeBattleship(this.playerOne);
-		let player1Submarine = this.placeSubmarine(this.playerOne);
-		let player1Destroyer = this.placeDestroyer(this.playerOne);
+		this.placeShip(this.ships[3], this.playerOne, player1Board);
+		console.table(player1Board);
+		return;
+		this.placeShip(this.ships[2], this.playerOne, player1Board);
+		this.placeShip(this.ships[1], this.playerOne, player1Board);
+		this.placeShip(this.ships[0], this.playerOne, player1Board);
 
-		let player2Carrier = this.placeCarrier(this.playerTwo);
-		let player2Battleship = this.placeBattleship(this.playerTwo);
-		let player2Submarine = this.placeSubmarine(this.playerTwo);
-		let player2Destroyer = this.placeDestroyer(this.playerTwo);
+		// console.log(player1Board);
+		// return;
+
+		this.placeShip(this.ships[3], this.playerTwo, player2Board);
+		this.placeShip(this.ships[2], this.playerTwo, player2Board);
+		this.placeShip(this.ships[1], this.playerTwo, player2Board);
+		this.placeShip(this.ships[0], this.playerTwo, player2Board);
 
 	}
 
@@ -85,6 +89,11 @@ class Game {
 			gameBoard.push(rowArray)
 			beginningChar++;
 		}
+		for (let r = 0; r < gameBoard[r]; r++) {
+			for (let c = 1; c <= gameBoard[r][c]; c++) {
+				gameBoard[r][c] = parseInt(gameBoard[r][c]);
+			}
+		}
 		return gameBoard;
 	}
 
@@ -100,79 +109,32 @@ class Game {
 	}
 
 	placeShip(ship, player, board) {
-		for (let i = 1; i <= ship.length; i ++) {
-			console.log(player.name + " please choose space #" + i + " for your " + ship.name + " (" + ship.length + " spaces total) using the format 'A1' where the capital letter is the row and the number is the column.");
+		let shipInitials = ["AC" + "B" + "S" + "D"];
+		for (let i = 1; i <= ship.size; i ++) {
+			console.log(player.name + " please choose space #" + i + " for your " + ship.name + " (" + ship.size + " spaces total) using the format 'A1' where the capital letter is the row and the number is the column.");
 			let response = this.validateFormat(prompt()).split("");
-			while (!this.isFreeSpace(response, board)) {
+			let rowIndex = 0;
+			let columnIndex = 0;
+			for (let i = 0; i < board.length; i++) {
+				if (board[i][0] === response[0]) {
+					rowIndex = i;
+				}
+			}
+			for (let i = 1; i < board[rowIndex].length; i++) {
+				if (board[rowIndex][i] === response[1]) {
+					columnIndex = i;
+				}
+			}
+			while (!this.isFreeSpace(rowIndex, columnIndex, board)) {
 				console.log("This space is unavailable.  Please choose a different one.");
 				response = this.validateFormat(prompt()).split("");
 			}
+			board[rowIndex][columnIndex] = "{}";
 		}
 	}
 
-	placeCarrier(player) {
-		console.log(player.name + " please choose the first space for your AIRCRAFT CARRIER(5 spaces total) using the format 'A1' where the capital letter is the row and the number is the column.");
-		let spaceOne = this.validateFormat(prompt()).split("");
-		console.log("Please choose the second space for your AIRCRAFT CARRIER(5 spaces total) using the format 'A1'.");
-		let spaceTwo = this.validateFormat(prompt()).split("");
-		while (spaceOne === spaceTwo) {
-			console.log("This space has already been used.  Please choose another space.");
-			spaceTwo = this.validateFormat(prompt()).split("");
-		}
-		console.log("Please choose the third space for your AIRCRAFT CARRIER(5 spaces total) using the format 'A1'.");
-		let spaceThree = this.validateFormat(prompt()).split("");
-		while (spaceOne === spaceTwo) {
-			console.log("This space has already been used.  Please choose another space.");
-			spaceThree = this.validateFormat(prompt()).split("");
-		}
-		console.log("Please choose the fourth space for your AIRCRAFT CARRIER(5 spaces total) using the format 'A1'.");
-		let spaceFour = this.validateFormat(prompt()).split("");
-		while (spaceOne === spaceTwo) {
-			console.log("This space has already been used.  Please choose another space.");
-			spaceFour = this.validateFormat(prompt()).split("");
-		}
-		console.log("Please choose the fifth space for your AIRCRAFT CARRIER(5 spaces total) using the format 'A1'.");
-		let spaceFive = this.validateFormat(prompt()).split("");
-		while (spaceOne === spaceTwo) {
-			console.log("This space has already been used.  Please choose another space.");
-			spaceFive = this.validateFormat(prompt()).split("");
-		}
-
-
-		return carrierLocation;
-	}
-
-	placeBattleship(player, board) {
-		let spacesUsed = 0;
-		console.log(player.name + " please choose the first space for your BATTLESHIP(4 spaces total) using the format 'A1' where the capital letter is the row and the number is the column.");
-		let battleshipLocation = this.validateFormat(prompt()).split("");
-
-
-		return battleshipLocation;
-	}
-
-	placeSubmarine(player, board) {
-		let spacesUsed = 0;
-		console.log(player.name + " please choose the first space for your SUBMARINE(3 spaces total) using the format 'A1' where the capital letter is the row and the number is the column.");
-		let submarineLocation = this.validateFormat(prompt()).split("");
-
-
-		return submarineLocation;
-	}
-
-	placeDestroyer(player, board) {
-		let spacesUsed = 0;
-		console.log(player.name + " please choose the first space for your DESTROYER(2 spaces total) using the format 'A1' where the capital letter is the row and the number is the column.");
-		let destroyerLocation = this.validateFormat(prompt()).split("");
-
-
-		return destroyerLocation;
-	}
-
-	isFreeSpace(response, board) {
-		let rowIndex = board.indexOf(response[0]);
-		let columnIndex = board.indexOf(response[1]);
-		if (board[rowIndex][columnIndex] !== "X" || board[rowIndex][columnIndex] !== "O") {
+	isFreeSpace(rowIndex, columnIndex, board) {
+		if (board[rowIndex][columnIndex] !== "{}") {
 			return true;
 		}
 		else {
