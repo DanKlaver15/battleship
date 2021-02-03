@@ -34,13 +34,9 @@ class Game {
 
 		this.displayRules();
 
-		console.log(this.generateGameBoard());
-		console.table(this.generateGameBoard());
 		let player1Board = this.generateGameBoard();
 		let player2Board = this.generateGameBoard();
 		this.displayGameBoard(player1Board);
-
-		return; //delete this later to run the whole program
 
 		let player1Carrier = this.placeCarrier(this.playerOne);
 		let player1Battleship = this.placeBattleship(this.playerOne);
@@ -60,6 +56,7 @@ class Game {
 		console.log(this.playerTwo.name + " will then also be given a chance to position his or her ships on his board. Please keep in mind that ships may no overlap or extend outside the boundry of the board.");
 		console.log("Once both players have had a chance to position their ships, " + this.playerOne.name + " will then have the opportunity to choose a location of his or her first shot.");
 		console.log(this.playerTwo.name + " will then have the same opportunity.");
+		console.log("A hit will be marked on the map as an 'X' and a miss will be marked as an 'O'");
 		console.log("The game will continue as such until one of the players has sunk all of his or her opponent's ships.");
 		console.log("The first player to sink all of his or her opponent's ships is the winner.");
 	}
@@ -102,35 +99,88 @@ class Game {
 		}
 	}
 
+	placeShip(ship, player, board) {
+		for (let i = 1; i <= ship.length; i ++) {
+			console.log(player.name + " please choose space #" + i + " for your " + ship.name + " (" + ship.length + " spaces total) using the format 'A1' where the capital letter is the row and the number is the column.");
+			let response = this.validateFormat(prompt()).split("");
+			while (!this.isFreeSpace(response, board)) {
+				console.log("This space is unavailable.  Please choose a different one.");
+				response = this.validateFormat(prompt()).split("");
+			}
+		}
+	}
+
 	placeCarrier(player) {
-		let carrierLocation = [];
 		console.log(player.name + " please choose the first space for your AIRCRAFT CARRIER(5 spaces total) using the format 'A1' where the capital letter is the row and the number is the column.");
-		carrierLocation.push(this.validateSpace(prompt()));
+		let spaceOne = this.validateFormat(prompt()).split("");
+		console.log("Please choose the second space for your AIRCRAFT CARRIER(5 spaces total) using the format 'A1'.");
+		let spaceTwo = this.validateFormat(prompt()).split("");
+		while (spaceOne === spaceTwo) {
+			console.log("This space has already been used.  Please choose another space.");
+			spaceTwo = this.validateFormat(prompt()).split("");
+		}
+		console.log("Please choose the third space for your AIRCRAFT CARRIER(5 spaces total) using the format 'A1'.");
+		let spaceThree = this.validateFormat(prompt()).split("");
+		while (spaceOne === spaceTwo) {
+			console.log("This space has already been used.  Please choose another space.");
+			spaceThree = this.validateFormat(prompt()).split("");
+		}
+		console.log("Please choose the fourth space for your AIRCRAFT CARRIER(5 spaces total) using the format 'A1'.");
+		let spaceFour = this.validateFormat(prompt()).split("");
+		while (spaceOne === spaceTwo) {
+			console.log("This space has already been used.  Please choose another space.");
+			spaceFour = this.validateFormat(prompt()).split("");
+		}
+		console.log("Please choose the fifth space for your AIRCRAFT CARRIER(5 spaces total) using the format 'A1'.");
+		let spaceFive = this.validateFormat(prompt()).split("");
+		while (spaceOne === spaceTwo) {
+			console.log("This space has already been used.  Please choose another space.");
+			spaceFive = this.validateFormat(prompt()).split("");
+		}
+
+
 		return carrierLocation;
 	}
 
-	placeBattleship(player) {
-		let battleshipLocation = [];
+	placeBattleship(player, board) {
+		let spacesUsed = 0;
 		console.log(player.name + " please choose the first space for your BATTLESHIP(4 spaces total) using the format 'A1' where the capital letter is the row and the number is the column.");
-		battleshipLocation.push(this.validateSpace(prompt()));
+		let battleshipLocation = this.validateFormat(prompt()).split("");
+
+
 		return battleshipLocation;
 	}
 
-	placeSubmarine(player) {
-		let submarineLocation = [];
+	placeSubmarine(player, board) {
+		let spacesUsed = 0;
 		console.log(player.name + " please choose the first space for your SUBMARINE(3 spaces total) using the format 'A1' where the capital letter is the row and the number is the column.");
-		submarineLocation.push(this.validateSpace(prompt()));
+		let submarineLocation = this.validateFormat(prompt()).split("");
+
+
 		return submarineLocation;
 	}
 
-	placeDestroyer(player) {
-		let destroyerLocation = [];
+	placeDestroyer(player, board) {
+		let spacesUsed = 0;
 		console.log(player.name + " please choose the first space for your DESTROYER(2 spaces total) using the format 'A1' where the capital letter is the row and the number is the column.");
-		destroyerLocation.push(this.validateSpace(prompt()));
+		let destroyerLocation = this.validateFormat(prompt()).split("");
+
+
 		return destroyerLocation;
 	}
 
-	validateSpace(space) {
+	isFreeSpace(response, board) {
+		let rowIndex = board.indexOf(response[0]);
+		let columnIndex = board.indexOf(response[1]);
+		if (board[rowIndex][columnIndex] !== "X" || board[rowIndex][columnIndex] !== "O") {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	validateFormat(space) {
 		let regex = new RegExp(/^[A-T]([1-9]|[1][1-9]|[2][0])$/);
 		while (!regex.test(space)) {
 			console.log("Your entry is invalid.  Please choose a space that begins with a capital letter A-T followed by a number 1-20.");
