@@ -4,9 +4,10 @@ const ship = require("./ship.js");
 const Ship = ship.Ship;
 
 class Destroyer extends Ship {
-	constructor(spaceSize) {
-		super(spaceSize);
-		this.spaceSize = 2;
+	constructor() {
+		super(length, name);
+		this.name = "Destroyer";
+		this.length = 2;
 	}
 }
 

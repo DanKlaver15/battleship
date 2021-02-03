@@ -2,7 +2,8 @@
 
 class Ship {
 	constructor() {
-		this.spaceSize = 0;
+		this.name = name;
+		this.length = 0;
 	}
 }
 
