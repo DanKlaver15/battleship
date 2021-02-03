@@ -34,9 +34,13 @@ class Game {
 
 		this.displayRules();
 
+		console.log(this.generateGameBoard());
 		console.table(this.generateGameBoard());
 		let player1Board = this.generateGameBoard();
 		let player2Board = this.generateGameBoard();
+		this.displayGameBoard(player1Board);
+
+		return; //delete this later to run the whole program
 
 		let player1Carrier = this.placeCarrier(this.playerOne);
 		let player1Battleship = this.placeBattleship(this.playerOne);
@@ -54,7 +58,7 @@ class Game {
 		console.log("Please read the following rules carefuly:")
 		console.log(this.playerOne.name + " will be given a chance to position his ships on his or her board first. Please keep in mind that ships may no overlap or extend outside the boundry of the board.");
 		console.log(this.playerTwo.name + " will then also be given a chance to position his or her ships on his board. Please keep in mind that ships may no overlap or extend outside the boundry of the board.");
-		console.log("Once both players have had a chance to position their ships, " + this.playerOne.name + " will then have the opportunity to choose a row followed by a column for the location of his or her first shot.");
+		console.log("Once both players have had a chance to position their ships, " + this.playerOne.name + " will then have the opportunity to choose a location of his or her first shot.");
 		console.log(this.playerTwo.name + " will then have the same opportunity.");
 		console.log("The game will continue as such until one of the players has sunk all of his or her opponent's ships.");
 		console.log("The first player to sink all of his or her opponent's ships is the winner.");
@@ -62,17 +66,40 @@ class Game {
 
 	generateGameBoard() {
 		let gameBoard = [];
-		let rows = 20;
-		let columns = 20;
+		let rowArray = [];
+		let numRows = 20;
+		let numColumns = 20;
+		let beginningChar = 65;
 
-		for (let c = 1; c <= columns; c++) {
-			let beginningChar = 65;
-			for (let r = 0; r < rows; r++) {
-				gameBoard.push([String.fromCharCode(beginningChar), c]);
-				beginningChar++;
+		for (let r = 0; r < numRows; r++) {
+			let boardRow = String.fromCharCode(beginningChar);
+			let boardColumns = "";
+			for (let c = 1; c <= numColumns; c++) {
+				let columnsDelimited = "";
+				if (c < numColumns) {
+					columnsDelimited = c + ",";
+				}
+				else {
+					columnsDelimited = c;
+				}
+				boardColumns += columnsDelimited; 
 			}
+			rowArray = (boardRow + "," + boardColumns).split(",");
+			gameBoard.push(rowArray)
+			beginningChar++;
 		}
 		return gameBoard;
+	}
+
+	displayGameBoard(board) {
+		let rows = 20;
+		let columns = 20;
+		let beginningChar = 65;
+
+		for (let r = 0; r < rows; r++) {
+				console.log(JSON.stringify(board));
+			beginningChar++;
+		}
 	}
 
 	placeCarrier(player) {
@@ -107,7 +134,7 @@ class Game {
 		let regex = new RegExp(/^[A-T]([1-9]|[1][1-9]|[2][0])$/);
 		while (!regex.test(space)) {
 			console.log("Your entry is invalid.  Please choose a space that begins with a capital letter A-T followed by a number 1-20.");
-			space = prompt().split("");
+			space = prompt();
 		}
 		return space;
 	}
