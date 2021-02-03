@@ -18,10 +18,10 @@ class Game {
 	constructor() {
 		this.ships = [];
 
-		this.ships.push(new Destroyer("Destroyer", 2));	// this.ships[3]
-		this.ships.push(new Submarine("Submarine", 3));	// this.ships[3]
-		this.ships.push(new Battleship("Battleship", 4));	// this.ships[3]
-		this.ships.push(new Carrier("Aircraft Carrier", 5));	// this.ships[3]
+		this.ships.push(new Destroyer("Destroyer", "D", 2));	// this.ships[3]
+		this.ships.push(new Submarine("Submarine", "S", 3));	// this.ships[3]
+		this.ships.push(new Battleship("Battleship", "B", 4));	// this.ships[3]
+		this.ships.push(new Carrier("Aircraft Carrier", "AC", 5));	// this.ships[3]
 	}
 
 	runGame() {
@@ -39,13 +39,13 @@ class Game {
 
 		this.placeShip(this.ships[3], this.playerOne, player1Board);
 		console.table(player1Board);
-		return;
 		this.placeShip(this.ships[2], this.playerOne, player1Board);
+		console.table(player1Board);
 		this.placeShip(this.ships[1], this.playerOne, player1Board);
+		console.table(player1Board);
 		this.placeShip(this.ships[0], this.playerOne, player1Board);
-
-		// console.log(player1Board);
-		// return;
+		console.table(player1Board);
+		return;
 
 		this.placeShip(this.ships[3], this.playerTwo, player2Board);
 		this.placeShip(this.ships[2], this.playerTwo, player2Board);
@@ -109,32 +109,61 @@ class Game {
 	}
 
 	placeShip(ship, player, board) {
-		let shipInitials = ["AC" + "B" + "S" + "D"];
+		let previousRowIndex = 0;
+		let previousColumnIndex = 0;
 		for (let i = 1; i <= ship.size; i ++) {
-			console.log(player.name + " please choose space #" + i + " for your " + ship.name + " (" + ship.size + " spaces total) using the format 'A1' where the capital letter is the row and the number is the column.");
-			let response = this.validateFormat(prompt()).split("");
+			let r = 0;
+			let c = 0;
 			let rowIndex = 0;
 			let columnIndex = 0;
-			for (let i = 0; i < board.length; i++) {
-				if (board[i][0] === response[0]) {
-					rowIndex = i;
+			console.log(player.name + " please choose space #" + i + " for your " + ship.name + " (" + ship.size + " spaces total) using the format 'A1' where the capital letter is the row and the number is the column.");
+			let response = this.validateFormat(prompt()).split("");
+			for (r = 0; r < board.length; r++) {
+				if (board[r][0] === response[0]) {
+					rowIndex = r;
 				}
 			}
-			for (let i = 1; i < board[rowIndex].length; i++) {
-				if (board[rowIndex][i] === response[1]) {
-					columnIndex = i;
+			for (c = 1; c < board[rowIndex].length; c++) {
+				if (board[rowIndex][c] === response[1]) {
+					columnIndex = c;
 				}
 			}
 			while (!this.isFreeSpace(rowIndex, columnIndex, board)) {
 				console.log("This space is unavailable.  Please choose a different one.");
 				response = this.validateFormat(prompt()).split("");
 			}
-			board[rowIndex][columnIndex] = "{}";
+			if (i > 1) {
+				while ((rowIndex !== previousRowIndex + 1 && columnIndex !== previousColumnIndex + 1) && (rowIndex !== previousRowIndex - 1 && columnIndex !== previousColumnIndex - 1)) {
+					console.log("A ship must be continuous without any open spaces.  Please choose a different space.");
+					response = this.validateFormat(prompt()).split("");
+				}
+			}
+			previousRowIndex = rowIndex;
+			previousColumnIndex = columnIndex;
+			board[rowIndex][columnIndex] = "{" + ship.initials + "}";
 		}
 	}
 
 	isFreeSpace(rowIndex, columnIndex, board) {
-		if (board[rowIndex][columnIndex] !== "{}") {
+		if (board[rowIndex][columnIndex].includes("{}")) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	isSpaceAdjacentToPrevious(rowIndex, columnIndex, previousRowIndex, previousColumnIndex, board) {
+		if (rowIndex === previousRowIndex + 1 && columnIndex === previousColumnIndex) {
+			return true;
+		}
+		else if (rowIndex === previousRowIndex && columnIndex === previousColumnIndex + 1) {
+			return true;
+		}
+		else if (rowIndex === previousRowIndex - 1 && columnIndex === previousColumnIndex) {
+			return true;
+		}
+		else if (rowIndex === previousRowIndex && columnIndex === previousColumnIndex - 1) {
 			return true;
 		}
 		else {
