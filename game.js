@@ -111,17 +111,16 @@ class Game {
 	placeShip(ship, player, board) {
 		let shipLocation = [];
 		for (let i = 1; i <= ship.size; i++) {
-			console.log(player.name + " please choose space #" + i + " for your " + ship.name + " (" + ship.size + " spaces total) using the format 'A1' where the capital letter is the row and the number is the column.");
+			console.log(player.name + ", please choose space #" + i + " for your " + ship.name + " (" + ship.size + " spaces total) using the format 'A1' where the capital letter is the row and the number is the column.");
 			let response = this.validateFormat(prompt()).split("");
 			let rowIndex = this.findRow(response, board);
-			let columnIndex = this.findColumn(response, rowIndex, board);
-			console.log(i, response, rowIndex, columnIndex, shipLocation, ship, ship.size);	// only for testing
+			let columnIndex = parseInt(response[1]);
 			if (i === 1) {
 				while (!this.isFreeSpace(rowIndex, columnIndex, board)) {
 					console.log("This space is unavailable.  Please choose a different one.");
 					response = this.validateFormat(prompt()).split("");
 					rowIndex = this.findRow(response, board);
-					columnIndex = this.findColumn(response, rowIndex, board);
+					columnIndex = parseInt(response[1]);
 				}
 			}
 			else if (i > 1) {
@@ -129,7 +128,7 @@ class Game {
 					console.log("This space is unavailable.  Either it has already been used or it does not form a continuous line with your previous spaces for this ship. Please choose a different one.");
 					response = this.validateFormat(prompt()).split("");
 					rowIndex = this.findRow(response, board);
-					columnIndex = this.findColumn(response, rowIndex, board);
+					columnIndex = parseInt(response[1]);
 				}
 			}
 			shipLocation.push(response);
@@ -142,15 +141,6 @@ class Game {
 			if (board[r][0] === response[0]) {
 				let rowIndex = r;
 				return rowIndex;
-			}
-		}
-	}
-
-	findColumn(response, rowIndex, board) {
-		for (let c = 1; c <= board[rowIndex].length; c++) {
-			if (board[rowIndex][c] === response[1]) {
-				let columnIndex = c;
-				return columnIndex
 			}
 		}
 	}
