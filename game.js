@@ -34,19 +34,20 @@ class Game {
 
 		this.displayRules();
 
-		let player1Board = this.generateGameBoard();
-		let player2Board = this.generateGameBoard();
+		let player1InternalBoard = this.generateGameBoard();
+		let player2InternalBoard = this.generateGameBoard();
+		let player1ExternalBoard = this.generateGameBoard();
+		let player2ExternalBoard = this.generateGameBoard();
 
-		this.placeShip(this.ships[3], this.playerOne, player1Board);
-		this.placeShip(this.ships[2], this.playerOne, player1Board);
-		this.placeShip(this.ships[1], this.playerOne, player1Board);
-		this.placeShip(this.ships[0], this.playerOne, player1Board);
-		return;
+		this.placeShip(this.ships[3], this.playerOne, player1InternalBoard);
+		this.placeShip(this.ships[2], this.playerOne, player1InternalBoard);
+		this.placeShip(this.ships[1], this.playerOne, player1InternalBoard);
+		this.placeShip(this.ships[0], this.playerOne, player1InternalBoard);
 
-		this.placeShip(this.ships[3], this.playerTwo, player2Board);
-		this.placeShip(this.ships[2], this.playerTwo, player2Board);
-		this.placeShip(this.ships[1], this.playerTwo, player2Board);
-		this.placeShip(this.ships[0], this.playerTwo, player2Board);
+		this.placeShip(this.ships[3], this.playerTwo, player2InternalBoard);
+		this.placeShip(this.ships[2], this.playerTwo, player2InternalBoard);
+		this.placeShip(this.ships[1], this.playerTwo, player2InternalBoard);
+		this.placeShip(this.ships[0], this.playerTwo, player2InternalBoard);
 
 	}
 
@@ -56,7 +57,7 @@ class Game {
 		console.log(this.playerTwo.name + " will then also be given a chance to position his or her ships on his board. Please keep in mind that ships may no overlap or extend outside the boundry of the board.");
 		console.log("Once both players have had a chance to position their ships, " + this.playerOne.name + " will then have the opportunity to choose a location of his or her first shot.");
 		console.log(this.playerTwo.name + " will then have the same opportunity.");
-		console.log("A hit will be marked on the map as an 'X' and a miss will be marked as an 'O'");
+		console.log("A hit will be marked on the map as an 'X' and a miss will be marked as an '0'");
 		console.log("The game will continue as such until one of the players has sunk all of his or her opponent's ships.");
 		console.log("The first player to sink all of his or her opponent's ships is the winner.");
 	}
@@ -142,6 +143,42 @@ class Game {
 		}
 	}
 
+	playRounds (playerOne, playerTwo, player1ExternalBoard, player2ExternalBoard, player1InternalBoard, player2InternalBoard) {
+		let spaceRegex = new RegExp(/[A-Z]|[0-9]+/g);
+		console.log("All ships have been placed.");
+		
+		while (scoreOne < 14 && scoreTwo < 14) {
+			// player 1 plays
+			console.log(playerOne.name + " please select a space to attack.");
+			target = this.validateFormat(prompt()).match(spaceRegex);
+			let rowIndex = this.findRow(target, player2InternalBoard);
+			let columnIndex = response[1];
+			if (player2InternalBoard[rowIndex][columnIndex].includes("{")) {
+				player2ExternalBoard[rowIndex][columnIndex] = "[X]";
+				playerOne.score++;
+			}
+			else {
+				player2ExternalBoard[rowIndex][columnIndex] = "[0]";
+			}
+			console.table(player2ExternalBoard);
+			console.table("Current score for " + playerOne.name + ": " + playerOne.score);
+			// player 2 plays
+			console.log(playerTwo.name + " please select a space to attack.");
+			target = this.validateFormat(prompt()).match(spaceRegex);
+			let rowIndex = this.findRow(target, player1InternalBoard);
+			let columnIndex = response[1];
+			if (player1InternalBoard[rowIndex][columnIndex].includes("{")) {
+				player1ExternalBoard[rowIndex][columnIndex] = "[X]";
+				playerTwo.score++;
+			}
+			else {
+				player1ExternalBoard[rowIndex][columnIndex] = "[0]";
+			}
+			console.table(player1ExternalBoard);
+			console.table("Current score for " + playerTwo.name + ": " + playerTwo.score);
+		}
+	}
+
 	findRow(response, board) {
 		for (let r = 0; r < board.length; r++) {
 			if (board[r][0] === response[0]) {
@@ -152,7 +189,6 @@ class Game {
 	}
 
 	isFreeSpace(rowIndex, columnIndex, board) {
-		console.log("isFreeSpace Check ", rowIndex, columnIndex, board[rowIndex][columnIndex], board[rowIndex][columnIndex].includes("{"));
 		if (!board[rowIndex][columnIndex].includes("{")) {
 			return true;
 		}
