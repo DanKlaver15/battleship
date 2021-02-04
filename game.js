@@ -38,13 +38,9 @@ class Game {
 		let player2Board = this.generateGameBoard();
 
 		this.placeShip(this.ships[3], this.playerOne, player1Board);
-		console.table(player1Board);
 		this.placeShip(this.ships[2], this.playerOne, player1Board);
-		console.table(player1Board);
 		this.placeShip(this.ships[1], this.playerOne, player1Board);
-		console.table(player1Board);
 		this.placeShip(this.ships[0], this.playerOne, player1Board);
-		console.table(player1Board);
 		return;
 
 		this.placeShip(this.ships[3], this.playerTwo, player2Board);
@@ -109,30 +105,40 @@ class Game {
 	// }
 
 	placeShip(ship, player, board) {
+		let spaceRegex = new RegExp(/[A-Z]|[0-9]+/g);
 		let shipLocation = [];
 		for (let i = 1; i <= ship.size; i++) {
 			console.log(player.name + ", please choose space #" + i + " for your " + ship.name + " (" + ship.size + " spaces total) using the format 'A1' where the capital letter is the row and the number is the column.");
-			let response = this.validateFormat(prompt()).split("");
+			let response = this.validateFormat(prompt()).match(spaceRegex);
 			let rowIndex = this.findRow(response, board);
-			let columnIndex = parseInt(response[1]);
+			let columnIndex = response[1];
 			if (i === 1) {
 				while (!this.isFreeSpace(rowIndex, columnIndex, board)) {
-					console.log("This space is unavailable.  Please choose a different one.");
-					response = this.validateFormat(prompt()).split("");
+					console.log("This space has already been used.  Please choose a different one.");
+					response = this.validateFormat(prompt()).match(spaceRegex);
 					rowIndex = this.findRow(response, board);
-					columnIndex = parseInt(response[1]);
+					columnIndex = response[1];
 				}
 			}
-			else if (i > 1) {
-				while (!this.isFreeSpace(rowIndex, columnIndex, board) && !this.isSpaceAdjacentToPrevious(shipLocation, response)) {
+			else if (i === 2) {
+				while (!this.isFreeSpace(rowIndex, columnIndex, board) || !this.isSpaceAdjacentToPrevious(shipLocation, response)) {
 					console.log("This space is unavailable.  Either it has already been used or it does not form a continuous line with your previous spaces for this ship. Please choose a different one.");
-					response = this.validateFormat(prompt()).split("");
+					response = this.validateFormat(prompt()).match(spaceRegex);
 					rowIndex = this.findRow(response, board);
-					columnIndex = parseInt(response[1]);
+					columnIndex = response[1];
+				}
+			}
+			else {
+				while (!this.isFreeSpace(rowIndex, columnIndex, board) || !this.isSpaceAdjacentToPrevious(shipLocation, response) || !this.isStraightLine(shipLocation, response)) {
+					console.log("This space is unavailable.  Either it has already been used or it does not form a continuous line with your previous spaces for this ship. Please choose a different one.");
+					response = this.validateFormat(prompt()).match(spaceRegex);
+					rowIndex = this.findRow(response, board);
+					columnIndex = response[1];
 				}
 			}
 			shipLocation.push(response);
 			board[rowIndex][columnIndex] = "{" + ship.initials + "}";
+			console.table(board);
 		}
 	}
 
@@ -146,6 +152,7 @@ class Game {
 	}
 
 	isFreeSpace(rowIndex, columnIndex, board) {
+		console.log("isFreeSpace Check ", rowIndex, columnIndex, board[rowIndex][columnIndex], board[rowIndex][columnIndex].includes("{"));
 		if (!board[rowIndex][columnIndex].includes("{")) {
 			return true;
 		}
@@ -155,20 +162,36 @@ class Game {
 	}
 
 	isSpaceAdjacentToPrevious(array, response) {
-			let result = false;
-			for (let i = 0; (i < array.length && result === false); i++) {
-				if ((Math.abs(array[i][0].charCodeAt(0) - response[0].charCodeAt(0)) === 1 && array[i][1] === response[1]) || (Math.abs(array[i][1] - response[1]) === 1 && array[i][0].charCodeAt(0) === response[0].charCodeAt(0))) {
-					result = true;
-				}
-				else {
-					result = false;
-				}
+		let result = false;
+		for (let i = 0; (i < array.length && result === false); i++) {
+			if ((Math.abs(array[i][0].charCodeAt(0) - response[0].charCodeAt(0)) === 1 && array[i][1] == response[1]) || (Math.abs(array[i][1] - response[1]) == 1 && array[i][0].charCodeAt(0) === response[0].charCodeAt(0))) {
+				result = true;
 			}
-			return result;
-		}	
+			else {
+				result = false;
+			}
+		}
+		return result;
+	}
+
+	isStraightLine(array, response) {
+		let orientation = "";
+		if (array[0][0] === array[1][0]) {
+			orientation = "horizontal";
+		}
+		else if (array[0][0] !== array[1][0]) {
+			orientation = "veritcal";
+		}
+		if ((orientation = "horizontal" && response[0] === array[0][0]) || (orientation = "vertical" && response[1] === array[0][1])) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 
 	validateFormat(space) {
-		let regex = new RegExp(/^[A-T]([1-9]|[1][1-9]|[2][0])$/);
+		let regex = new RegExp(/^[A-T]([1-9]|[1][0-9]|[2][0])$/);
 		while (!regex.test(space)) {
 			console.log("Your entry is invalid.  Please choose a space that begins with a capital letter A-T followed by a number 1-20.");
 			space = prompt();
