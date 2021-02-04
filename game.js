@@ -1,6 +1,7 @@
 "use strict";
 
 const prompt = require("prompt-sync")();
+const readlineSync = require('readline-sync');
 const player = require("./player.js");
 const Player = player.Player;
 const destroyer = require("./destroyer.js");
@@ -11,6 +12,33 @@ const battleship = require("./battleship.js");
 const Battleship = battleship.Battleship;
 const carrier = require("./carrier.js");
 const Carrier = carrier.Carrier;
+const Color = {
+	Reset: "\x1b[0m",
+	Bright: "\x1b[1m",
+	Dim: "\x1b[2m",
+	Underscore: "\x1b[4m",
+	Blink: "\x1b[5m",
+	Reverse: "\x1b[7m",
+	Hidden: "\x1b[8m",
+ 
+	FgBlack: "\x1b[30m",
+	FgRed: "\x1b[31m",
+	FgGreen: "\x1b[32m",
+	FgYellow: "\x1b[33m",
+	FgBlue: "\x1b[34m",
+	FgMagenta: "\x1b[35m",
+	FgCyan: "\x1b[36m",
+	FgWhite: "\x1b[37m",
+ 
+	BgBlack: "\x1b[40m",
+	BgRed: "\x1b[41m",
+	BgGreen: "\x1b[42m",
+	BgYellow: "\x1b[43m",
+	BgBlue: "\x1b[44m",
+	BgMagenta: "\x1b[45m",
+	BgCyan: "\x1b[46m",
+	BgWhite: "\x1b[47m"
+ }
 
 /*====================================================================*/
 
@@ -30,7 +58,7 @@ class Game {
 		this.playerOne = new Player(prompt());
 		console.log("Player 2, please enter your name.");
 		this.playerTwo = new Player(prompt());
-		console.log("Welcome " + this.playerOne.name + " and " + this.playerTwo.name);
+		console.log("Welcome " + this.addColor(Color.FgGreen, this.playerOne.name, Color.Reset) + " and " + this.addColor(Color.FgBlue, this.playerTwo.name, Color.Reset));
 
 		this.displayRules();
 
@@ -49,14 +77,16 @@ class Game {
 		this.placeShip(this.ships[1], this.playerTwo, player2InternalBoard);
 		this.placeShip(this.ships[0], this.playerTwo, player2InternalBoard);
 
+		this.playRounds(playerOne, playerTwo, player1ExternalBoard, player2ExternalBoard, player1InternalBoard, player2InternalBoard);
+
 	}
 
 	displayRules() {
 		console.log("Please read the following rules carefuly:")
-		console.log(this.playerOne.name + " will be given a chance to position his ships on his or her board first. Please keep in mind that ships may no overlap or extend outside the boundry of the board.");
-		console.log(this.playerTwo.name + " will then also be given a chance to position his or her ships on his board. Please keep in mind that ships may no overlap or extend outside the boundry of the board.");
-		console.log("Once both players have had a chance to position their ships, " + this.playerOne.name + " will then have the opportunity to choose a location of his or her first shot.");
-		console.log(this.playerTwo.name + " will then have the same opportunity.");
+		console.log(this.addColor(Color.FgGreen, this.playerOne.name, Color.Reset) + " will be given a chance to position his ships on his or her board first. Please keep in mind that ships may no overlap or extend outside the boundry of the board.");
+		console.log(this.addColor(Color.FgBlue, this.playerTwo.name, Color.Reset) + " will then also be given a chance to position his or her ships on his board. Please keep in mind that ships may no overlap or extend outside the boundry of the board.");
+		console.log("Once both players have had a chance to position their ships, " + this.addColor(Color.FgGreen, this.playerOne.name, Color.Reset) + " will then have the opportunity to choose a location of his or her first shot.");
+		console.log(this.addColor(Color.FgBlue, this.playerTwo.name, Color.Reset) + " will then have the same opportunity.");
 		console.log("A hit will be marked on the map as an 'X' and a miss will be marked as an '0'");
 		console.log("The game will continue as such until one of the players has sunk all of his or her opponent's ships.");
 		console.log("The first player to sink all of his or her opponent's ships is the winner.");
@@ -107,9 +137,16 @@ class Game {
 
 	placeShip(ship, player, board) {
 		let spaceRegex = new RegExp(/[A-Z]|[0-9]+/g);
+		let nameColor = "";
+		if (player.name === this.playerOne.name) {
+			nameColor = Color.FgGreen;
+		}
+		else {
+			nameColor = Color.FgBlue;
+		}
 		let shipLocation = [];
 		for (let i = 1; i <= ship.size; i++) {
-			console.log(player.name + ", please choose space #" + i + " for your " + ship.name + " (" + ship.size + " spaces total) using the format 'A1' where the capital letter is the row and the number is the column.");
+			console.log(this.addColor(nameColor, player.name, Color.Reset) + ", please choose space #" + i + " for your " + ship.name + " (" + ship.size + " spaces total) using the format 'A1' where the capital letter is the row and the number is the column.");
 			let response = this.validateFormat(prompt()).match(spaceRegex);
 			let rowIndex = this.findRow(response, board);
 			let columnIndex = response[1];
@@ -165,8 +202,8 @@ class Game {
 			// player 2 plays
 			console.log(playerTwo.name + " please select a space to attack.");
 			target = this.validateFormat(prompt()).match(spaceRegex);
-			let rowIndex = this.findRow(target, player1InternalBoard);
-			let columnIndex = response[1];
+			rowIndex = this.findRow(target, player1InternalBoard);
+			columnIndex = response[1];
 			if (player1InternalBoard[rowIndex][columnIndex].includes("{")) {
 				player1ExternalBoard[rowIndex][columnIndex] = "[X]";
 				playerTwo.score++;
@@ -233,7 +270,11 @@ class Game {
 			space = prompt();
 		}
 		return space;
-		}
+	}
+
+	addColor(color, str, reset) {
+		return (color + str + reset);
+	}
 }
 
 /*====================================================================*/
