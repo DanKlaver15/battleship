@@ -1,7 +1,9 @@
 "use strict";
 
 const prompt = require("prompt-sync")();
+
 const readlineSync = require('readline-sync');
+const readline = require('readline');
 const player = require("./player.js");
 const Player = player.Player;
 const destroyer = require("./destroyer.js");
@@ -55,9 +57,9 @@ class Game {
 	runGame() {
 		console.log("Welcome to the game of Battleship!");
 		console.log("Player 1, please enter your name.");
-		this.playerOne = new Player(prompt());
+		this.playerOne = new Player(prompt(), Color.FgGreen);
 		console.log("Player 2, please enter your name.");
-		this.playerTwo = new Player(prompt());
+		this.playerTwo = new Player(prompt(), Color.FgBlue);
 		console.log("Welcome " + this.addColor(Color.FgGreen, this.playerOne.name, Color.Reset) + " and " + this.addColor(Color.FgBlue, this.playerTwo.name, Color.Reset));
 
 		this.displayRules();
@@ -77,9 +79,13 @@ class Game {
 		this.placeShip(this.ships[1], this.playerTwo, player2InternalBoard);
 		this.placeShip(this.ships[0], this.playerTwo, player2InternalBoard);
 
-		this.playRounds(playerOne, playerTwo, player1ExternalBoard, player2ExternalBoard, player1InternalBoard, player2InternalBoard);
+		this.playRounds(this.playerOne, this.playerTwo, player1ExternalBoard, player2ExternalBoard, player1InternalBoard, player2InternalBoard);
+
+		this.askRepeatGame();
 
 	}
+
+/*======================================================================*/
 
 	displayRules() {
 		console.log("Please read the following rules carefuly:")
@@ -182,37 +188,107 @@ class Game {
 
 	playRounds (playerOne, playerTwo, player1ExternalBoard, player2ExternalBoard, player1InternalBoard, player2InternalBoard) {
 		let spaceRegex = new RegExp(/[A-Z]|[0-9]+/g);
-		console.log("All ships have been placed.");
+		console.log("All ships have been placed." + "\n");
 		
-		while (scoreOne < 14 && scoreTwo < 14) {
+		while (playerOne.score < 4 && playerTwo.score < 4) {
 			// player 1 plays
-			console.log(playerOne.name + " please select a space to attack.");
-			target = this.validateFormat(prompt()).match(spaceRegex);
+			console.table(player2ExternalBoard);
+			console.log(this.addColor(Color.FgGreen, playerOne.name, Color.Reset) + " please select a space to attack.");
+			let target = this.validateFormat(prompt()).match(spaceRegex);
 			let rowIndex = this.findRow(target, player2InternalBoard);
-			let columnIndex = response[1];
+			let columnIndex = target[1];
+			while (player2ExternalBoard[rowIndex][columnIndex] === "[X]" || player2ExternalBoard[rowIndex][columnIndex] === "[0]") {
+				console.log("You have already attacked this space.  Please choose a different space.");
+				target = this.validateFormat(prompt()).match(spaceRegex);
+				rowIndex = this.findRow(target, player2InternalBoard);
+				columnIndex = target[1];
+			}
 			if (player2InternalBoard[rowIndex][columnIndex].includes("{")) {
 				player2ExternalBoard[rowIndex][columnIndex] = "[X]";
-				playerOne.score++;
 			}
 			else {
 				player2ExternalBoard[rowIndex][columnIndex] = "[0]";
 			}
 			console.table(player2ExternalBoard);
-			console.table("Current score for " + playerOne.name + ": " + playerOne.score);
+			this.trackScore(player2InternalBoard, rowIndex, columnIndex, playerOne, playerTwo);
+			console.log("Current score for " + this.addColor(Color.FgGreen, playerOne.name, Color.Reset) + ": " + playerOne.score);
+			this.clearConsole();
 			// player 2 plays
-			console.log(playerTwo.name + " please select a space to attack.");
+			console.table(player1ExternalBoard);
+			console.log(this.addColor(Color.FgBlue, playerTwo.name, Color.Reset) + " please select a space to attack.");
 			target = this.validateFormat(prompt()).match(spaceRegex);
 			rowIndex = this.findRow(target, player1InternalBoard);
-			columnIndex = response[1];
+			columnIndex = target[1];
+			while (player1ExternalBoard[rowIndex][columnIndex] === "[X]" || player1ExternalBoard[rowIndex][columnIndex] === "[0]") {
+				console.log("You have already attacked this space.  Please choose a different space.");
+				target = this.validateFormat(prompt()).match(spaceRegex);
+				rowIndex = this.findRow(target, player1InternalBoard);
+				columnIndex = target[1];
+			}
 			if (player1InternalBoard[rowIndex][columnIndex].includes("{")) {
 				player1ExternalBoard[rowIndex][columnIndex] = "[X]";
-				playerTwo.score++;
 			}
 			else {
 				player1ExternalBoard[rowIndex][columnIndex] = "[0]";
 			}
 			console.table(player1ExternalBoard);
-			console.table("Current score for " + playerTwo.name + ": " + playerTwo.score);
+			this.trackScore(player1InternalBoard, rowIndex, columnIndex, playerTwo, playerOne);
+			console.log("Current score for " + this.addColor(Color.FgBlue, playerTwo.name, Color.Reset) + ": " + playerTwo.score);
+			this.clearConsole();
+		}
+		if (playerOne.score === 4) {
+			console.log(this.addColor(Color.Bright, "Congratulations " + this.addColor(Color.FgGreen, playerOne.name, Color.Reset) + ". You won!") + "\n");
+		}
+		else if (playerTwo.score === 4) {
+			console.log(this.addColor(Color.Bright, "Congratulations " + this.addColor(Color.FgGreen, playerTwo.name, Color.Reset) + ". You won!") + "\n");
+		}
+	}
+
+	trackScore(internalBoard, rowIndex, columnIndex, currentPlayer, opposingPlayer) {
+		switch (internalBoard[rowIndex][columnIndex]) {
+			case "{AC}":
+				this.ships[3].hits++;
+				break;
+			case "{B}":
+				this.ships[2].hits++;
+				break;
+			case "{S}":
+				this.ships[1].hits++;
+				break;
+			case "{D}":
+				this.ships[0].hits++;
+				break;
+			default:
+				break;
+		}
+		for (let i = 0; i < this.ships.length; i++) {
+			if (this.ships[i].hits === this.ships[i].size) {
+				currentPlayer.score++;
+				console.log(this.addColor(Color.Bright, "You sunk ", Color.Reset) + this.addColor(Color.Bright + opposingPlayer.color, opposingPlayer.name, Color.Reset) + this.addColor(Color.Bright, "'s " + this.ships[i].name, Color.Reset));
+			}
+		}
+	}
+
+	askRepeatGame() {
+		console.log("Would you like to play again? Enter " + this.addColor(Color.FgGreen, "yes", Color.Reset) + " to begin a new game or type " + this.addColor(Color.FgGreen, "exit", Color.Reset) +  " to stop playing.");
+		let repeatGame = prompt();
+		if (repeatGame.trim().toLowerCase() === 'exit') {
+			console.log("Goodbye!");
+			return;
+		}
+		else {
+			while (repeatGame.trim().toLowerCase() !== "exit" && repeatGame.toLowerCase().trim() !== "yes") {
+				console.log("Your response was invalid. Please enter " + this.addColor(Color.FgGreen, "yes", Color.Reset) + " to begin a new game or type " + this.addColor(Color.FgGreen, "exit", Color.Reset) +  " to stop playing.");
+				repeatGame = prompt();
+			}
+			if (repeatGame.trim().toLowerCase() === "exit") {
+				console.log("Goodbye!");
+				return;
+			}
+			else if (repeatGame.toLowerCase().trim() === "yes") {
+				let additionalGame = new Game();
+				additionalGame.runGame();
+			}
 		}
 	}
 
@@ -253,7 +329,7 @@ class Game {
 			orientation = "horizontal";
 		}
 		else if (array[0][0] !== array[1][0]) {
-			orientation = "veritcal";
+			orientation = "vertical";
 		}
 		if ((orientation = "horizontal" && response[0] === array[0][0]) || (orientation = "vertical" && response[1] === array[0][1])) {
 			return true;
@@ -274,6 +350,11 @@ class Game {
 
 	addColor(color, str, reset) {
 		return (color + str + reset);
+	}
+
+	clearConsole() {
+		readlineSync.question("When you are finished reviewing the board, please hit enter to clear the console so the next player can play.", {hideEchoBack: true, mask: ''});
+		process.stdout.write("\u001b[3J\u001b[2J\u001b[1J");
 	}
 }
 
