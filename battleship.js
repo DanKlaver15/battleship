@@ -6,6 +6,7 @@ const Ship = ship.Ship;
 class Battleship extends Ship {
 	constructor(name, initials, size) {
 		super(name, initials, size);
+		this.hits = 0;
 	}
 }
 
