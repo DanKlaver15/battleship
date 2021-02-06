@@ -186,7 +186,7 @@ class Game {
 				}
 			}
 			shipLocation.push(response);
-			board[rowIndex][columnIndex] = this.addColor(Color.FgCyan, "{" + ship.initials + "}", Color.Reset);
+			board[rowIndex][columnIndex] = this.addColor(Color.BgCyan + Color.FgBlack, "{" + ship.initials + "}", Color.Reset);
 			this.drawGameBoard(board);
 		}
 	}
@@ -209,10 +209,10 @@ class Game {
 				columnIndex = target[1];
 			}
 			if (player2InternalBoard[rowIndex][columnIndex].includes("{")) {
-				player2ExternalBoard[rowIndex][columnIndex] = "[X]";
+				player2ExternalBoard[rowIndex][columnIndex] = this.addColor(Color.BgRed + Color.FgBlack, "[X]", Color.Reset);
 			}
 			else {
-				player2ExternalBoard[rowIndex][columnIndex] = "[0]";
+				player2ExternalBoard[rowIndex][columnIndex] = this.addColor(Color.BgYellow + Color.FgBlack, "[0]", Color.Reset);
 			}
 			console.table(player2ExternalBoard);
 			this.trackScore(player2InternalBoard, rowIndex, columnIndex, playerOne, playerTwo);
@@ -231,10 +231,10 @@ class Game {
 				columnIndex = target[1];
 			}
 			if (player1InternalBoard[rowIndex][columnIndex].includes("{")) {
-				player1ExternalBoard[rowIndex][columnIndex] = "[X]";
+				player1ExternalBoard[rowIndex][columnIndex] = this.addColor(Color.BgRed + Color.FgBlack, "[X]", Color.Reset);
 			}
 			else {
-				player1ExternalBoard[rowIndex][columnIndex] = "[0]";
+				player1ExternalBoard[rowIndex][columnIndex] = this.addColor(Color.BgYellow + Color.FgBlack, "[0]", Color.Reset);
 			}
 			console.table(player1ExternalBoard);
 			this.trackScore(player1InternalBoard, rowIndex, columnIndex, playerTwo, playerOne);
