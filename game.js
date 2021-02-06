@@ -1,9 +1,11 @@
 "use strict";
 
 const prompt = require("prompt-sync")();
-
 const readlineSync = require('readline-sync');
-const readline = require('readline');
+const {table, getBorderCharacters} = require('table');
+
+/*======================================================================*/
+
 const player = require("./player.js");
 const Player = player.Player;
 const destroyer = require("./destroyer.js");
@@ -62,7 +64,7 @@ class Game {
 		this.playerTwo = new Player(prompt(), Color.FgBlue);
 		console.log("Welcome " + this.addColor(Color.FgGreen, this.playerOne.name, Color.Reset) + " and " + this.addColor(Color.FgBlue, this.playerTwo.name, Color.Reset));
 
-		this.displayRules();
+		// this.displayRules();
 
 		let player1InternalBoard = this.generateGameBoard();
 		let player2InternalBoard = this.generateGameBoard();
@@ -70,18 +72,18 @@ class Game {
 		let player2ExternalBoard = this.generateGameBoard();
 
 		this.placeShip(this.ships[3], this.playerOne, player1InternalBoard);
-		this.placeShip(this.ships[2], this.playerOne, player1InternalBoard);
-		this.placeShip(this.ships[1], this.playerOne, player1InternalBoard);
-		this.placeShip(this.ships[0], this.playerOne, player1InternalBoard);
+		// this.placeShip(this.ships[2], this.playerOne, player1InternalBoard);
+		// this.placeShip(this.ships[1], this.playerOne, player1InternalBoard);
+		// this.placeShip(this.ships[0], this.playerOne, player1InternalBoard);
 
-		this.placeShip(this.ships[3], this.playerTwo, player2InternalBoard);
-		this.placeShip(this.ships[2], this.playerTwo, player2InternalBoard);
-		this.placeShip(this.ships[1], this.playerTwo, player2InternalBoard);
-		this.placeShip(this.ships[0], this.playerTwo, player2InternalBoard);
+		// this.placeShip(this.ships[3], this.playerTwo, player2InternalBoard);
+		// this.placeShip(this.ships[2], this.playerTwo, player2InternalBoard);
+		// this.placeShip(this.ships[1], this.playerTwo, player2InternalBoard);
+		// this.placeShip(this.ships[0], this.playerTwo, player2InternalBoard);
 
-		this.playRounds(this.playerOne, this.playerTwo, player1ExternalBoard, player2ExternalBoard, player1InternalBoard, player2InternalBoard);
+		// this.playRounds(this.playerOne, this.playerTwo, player1ExternalBoard, player2ExternalBoard, player1InternalBoard, player2InternalBoard);
 
-		this.askRepeatGame();
+		// this.askRepeatGame();
 
 	}
 
@@ -98,7 +100,7 @@ class Game {
 		console.log("The first player to sink all of his or her opponent's ships is the winner.");
 	}
 
-	generateGameBoard() {
+	generateGameBoard() {	// This is just a console.table display of the board created.  It shows indeces for each row/column
 		let gameBoard = [];
 		let rowArray = [];
 		let numRows = 20;
@@ -119,7 +121,7 @@ class Game {
 				boardColumns += columnsDelimited; 
 			}
 			rowArray = (boardRow + "," + boardColumns).split(",");
-			gameBoard.push(rowArray)
+			gameBoard.push(rowArray);
 			beginningChar++;
 		}
 		for (let r = 0; r < gameBoard[r]; r++) {
@@ -130,16 +132,19 @@ class Game {
 		return gameBoard;
 	}
 
-	// displayGameBoard(board) {
-	// 	let rows = 20;
-	// 	let columns = 20;
-	// 	let beginningChar = 65;
+	drawGameBoard(board) {
+		let config, output;
+		config = {
+			border: getBorderCharacters(`honeywell`),
+    		columnDefault: {
+				width: 5,
+				alignment: 'center'
+    		}
+		};
 
-	// 	for (let r = 0; r < rows; r++) {
-	// 			console.log(JSON.stringify(board));
-	// 		beginningChar++;
-	// 	}
-	// }
+		output = table(board, config);
+		console.log(output);
+	}
 
 	placeShip(ship, player, board) {
 		let spaceRegex = new RegExp(/[A-Z]|[0-9]+/g);
@@ -181,8 +186,8 @@ class Game {
 				}
 			}
 			shipLocation.push(response);
-			board[rowIndex][columnIndex] = "{" + ship.initials + "}";
-			console.table(board);
+			board[rowIndex][columnIndex] = this.addColor(Color.FgCyan, "{" + ship.initials + "}", Color.Reset);
+			this.drawGameBoard(board);
 		}
 	}
 
