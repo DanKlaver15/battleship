@@ -20,7 +20,7 @@
   "homepage": "https://github.com/DanKlaver15/battleship#readme",
   "dependencies": {
     "prompt-sync": "^4.2.0",
-    "readline": "^1.3.0",
-    "readline-sync": "^1.4.10"
+    "readline-sync": "^1.4.10",
+    "table": "^6.0.7"
   }
 }
