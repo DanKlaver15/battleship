@@ -64,7 +64,7 @@ class Game {
 		this.playerTwo = new Player(prompt(), Color.FgBlue);
 		console.log("Welcome " + this.addColor(Color.FgGreen, this.playerOne.name, Color.Reset) + " and " + this.addColor(Color.FgBlue, this.playerTwo.name, Color.Reset));
 
-		// this.displayRules();
+		this.displayRules();
 
 		let player1InternalBoard = this.generateGameBoard();
 		let player2InternalBoard = this.generateGameBoard();
@@ -72,18 +72,19 @@ class Game {
 		let player2ExternalBoard = this.generateGameBoard();
 
 		this.placeShip(this.ships[3], this.playerOne, player1InternalBoard);
-		// this.placeShip(this.ships[2], this.playerOne, player1InternalBoard);
-		// this.placeShip(this.ships[1], this.playerOne, player1InternalBoard);
-		// this.placeShip(this.ships[0], this.playerOne, player1InternalBoard);
+		this.placeShip(this.ships[2], this.playerOne, player1InternalBoard);
+		this.placeShip(this.ships[1], this.playerOne, player1InternalBoard);
+		this.placeShip(this.ships[0], this.playerOne, player1InternalBoard);
+		this.clearConsole();
+		this.placeShip(this.ships[3], this.playerTwo, player2InternalBoard);
+		this.placeShip(this.ships[2], this.playerTwo, player2InternalBoard);
+		this.placeShip(this.ships[1], this.playerTwo, player2InternalBoard);
+		this.placeShip(this.ships[0], this.playerTwo, player2InternalBoard);
+		this.clearConsole();
 
-		// this.placeShip(this.ships[3], this.playerTwo, player2InternalBoard);
-		// this.placeShip(this.ships[2], this.playerTwo, player2InternalBoard);
-		// this.placeShip(this.ships[1], this.playerTwo, player2InternalBoard);
-		// this.placeShip(this.ships[0], this.playerTwo, player2InternalBoard);
+		this.playRounds(this.playerOne, this.playerTwo, player1ExternalBoard, player2ExternalBoard, player1InternalBoard, player2InternalBoard);
 
-		// this.playRounds(this.playerOne, this.playerTwo, player1ExternalBoard, player2ExternalBoard, player1InternalBoard, player2InternalBoard);
-
-		// this.askRepeatGame();
+		this.askRepeatGame();
 
 	}
 
@@ -98,6 +99,7 @@ class Game {
 		console.log("A hit will be marked on the map as an 'X' and a miss will be marked as an '0'");
 		console.log("The game will continue as such until one of the players has sunk all of his or her opponent's ships.");
 		console.log("The first player to sink all of his or her opponent's ships is the winner.");
+		readlineSync.question('Hit Enter key to continue.', {hideEchoBack: true, mask: ''});
 	}
 
 	generateGameBoard() {	// This is just a console.table display of the board created.  It shows indeces for each row/column
@@ -156,6 +158,7 @@ class Game {
 			nameColor = Color.FgBlue;
 		}
 		let shipLocation = [];
+		this.drawGameBoard(board);
 		for (let i = 1; i <= ship.size; i++) {
 			console.log(this.addColor(nameColor, player.name, Color.Reset) + ", please choose space #" + i + " for your " + ship.name + " (" + ship.size + " spaces total) using the format 'A1' where the capital letter is the row and the number is the column.");
 			let response = this.validateFormat(prompt()).match(spaceRegex);
@@ -197,7 +200,7 @@ class Game {
 		
 		while (playerOne.score < 4 && playerTwo.score < 4) {
 			// player 1 plays
-			console.table(player2ExternalBoard);
+			this.drawGameBoard(player2ExternalBoard);
 			console.log(this.addColor(Color.FgGreen, playerOne.name, Color.Reset) + " please select a space to attack.");
 			let target = this.validateFormat(prompt()).match(spaceRegex);
 			let rowIndex = this.findRow(target, player2InternalBoard);
@@ -214,12 +217,12 @@ class Game {
 			else {
 				player2ExternalBoard[rowIndex][columnIndex] = this.addColor(Color.BgYellow + Color.FgBlack, "[0]", Color.Reset);
 			}
-			console.table(player2ExternalBoard);
+			this.drawGameBoard(player2ExternalBoard);
 			this.trackScore(player2InternalBoard, rowIndex, columnIndex, playerOne, playerTwo);
 			console.log("Current score for " + this.addColor(Color.FgGreen, playerOne.name, Color.Reset) + ": " + playerOne.score);
 			this.clearConsole();
 			// player 2 plays
-			console.table(player1ExternalBoard);
+			this.drawGameBoard(player1ExternalBoard);
 			console.log(this.addColor(Color.FgBlue, playerTwo.name, Color.Reset) + " please select a space to attack.");
 			target = this.validateFormat(prompt()).match(spaceRegex);
 			rowIndex = this.findRow(target, player1InternalBoard);
@@ -236,7 +239,7 @@ class Game {
 			else {
 				player1ExternalBoard[rowIndex][columnIndex] = this.addColor(Color.BgYellow + Color.FgBlack, "[0]", Color.Reset);
 			}
-			console.table(player1ExternalBoard);
+			this.drawGameBoard(player1ExternalBoard);
 			this.trackScore(player1InternalBoard, rowIndex, columnIndex, playerTwo, playerOne);
 			console.log("Current score for " + this.addColor(Color.FgBlue, playerTwo.name, Color.Reset) + ": " + playerTwo.score);
 			this.clearConsole();
