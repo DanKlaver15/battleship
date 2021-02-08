@@ -27,6 +27,7 @@ const Color = {
  
 	FgBlack: "\x1b[30m",
 	FgRed: "\x1b[31m",
+
 	FgGreen: "\x1b[32m",
 	FgYellow: "\x1b[33m",
 	FgBlue: "\x1b[34m",
@@ -63,6 +64,7 @@ class Game {
 	}
 
 	runGame() {
+
 		console.log("Welcome to the game of Battleship!");
 		console.log("Player 1, please enter your name.");
 		this.playerOne = new Player(prompt(), Color.FgGreen);
@@ -231,7 +233,26 @@ class Game {
 		}
 	}
 
-	playRounds (playerOne, playerTwo, player1ExternalBoard, player2ExternalBoard, player1InternalBoard, player2InternalBoard) {
+	testPlaceShip(ship, player, board) {
+		let regex1 = new RegExp (/^([A-T]([1-9]|[1][0-9]|[2][0]))\-/);
+		let regex2 = new RegExp (/\-([A-T]([1-9]|[1][0-9]|[2][0]))$/);
+		let spaceRegex = new RegExp(/[A-Z]|[0-9]+/g);
+		if (player.name === this.playerOne.name) {
+			nameColor = Color.FgGreen;
+		}
+		else {
+			nameColor = Color.FgBlue;
+		}
+		this.drawGameBoard(board);
+		for (let i = 1; i < ship.size; i++) {
+			console.log(this.addColor(nameColor, player.name, Color.Reset) + ", please choose a range of spaces for your " + ships.name + " (" + ships.size + " spaces total) using the format 'A1-A5' or 'B1-F5' that are located inside the board.");
+			let response1 = this.validateRange(prompt()).match(regex1)[1].match(spaceRegex);
+			let response2 = this.validateRange(prompt()).match(regex2)[1].match(spaceRegex);
+			
+		}
+	}
+
+	playRounds(playerOne, playerTwo, player1ExternalBoard, player2ExternalBoard, player1InternalBoard, player2InternalBoard) {
 		let destroyedShips1 = [];
 		let destroyedShips2 = [];
 		let spaceRegex = new RegExp(/[A-Z]|[0-9]+/g);
@@ -413,6 +434,25 @@ class Game {
 		}
 		return space;
 	}
+
+	validateRange(range) {
+		let regex1 = new RegExp (/^([A-T]([1-9]|[1][0-9]|[2][0]))\-/);
+		let regex2 = new RegExp (/\-([A-T]([1-9]|[1][0-9]|[2][0]))$/);
+		while (!regex1.test(range) && !regex2.test(range)) {
+			console.log("Your entry is invalid. Please enter a range of spaces in the format 'A1-A5' or 'B1-F5' that are located inside the board.");
+			range = prompt();
+		}
+		return range;
+	}
+
+	rangeEqualsShipSize(ship, response1, response2) {
+		while (Math.abs(response1[0].charCodeAt(0) - response2[0].charCodeAt(0)) !== ship.size && respone1[1] !== response2[1] || Math.abs(response1[1] - response2[1]) !== ship.size && response1[0].charCodeAt(0) === response2[0].charCodeAt(0)) {
+			console.log("The range of values you entered is invalid. It must the size of your " + ship.name + "(" + ship.size + " spaces) in a vertical or horizontal line.");
+		}
+		return true;
+		}
+	}
+
 
 	addColor(color, str, reset) {
 		return (color + str + reset);
