@@ -87,17 +87,6 @@ class Game {
 		let player1ExternalBoard = this.generateGameBoard();
 		let player2ExternalBoard = this.generateGameBoard();
 
-		// this.placeShip(this.ships1[3], this.playerOne, player1InternalBoard);
-		// this.placeShip(this.ships1[2], this.playerOne, player1InternalBoard);
-		// this.placeShip(this.ships1[1], this.playerOne, player1InternalBoard);
-		// this.placeShip(this.ships1[0], this.playerOne, player1InternalBoard);
-		// this.clearConsole();
-		// this.placeShip(this.ships2[3], this.playerTwo, player2InternalBoard);
-		// this.placeShip(this.ships2[2], this.playerTwo, player2InternalBoard);
-		// this.placeShip(this.ships2[1], this.playerTwo, player2InternalBoard);
-		// this.placeShip(this.ships2[0], this.playerTwo, player2InternalBoard);
-		// this.clearConsole();
-
 		this.placeShips(this.ships1, this.playerOne, player1InternalBoard);
 		this.clearConsole();
 		this.placeShips(this.ships2, this.playerTwo, player2InternalBoard);
