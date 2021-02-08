@@ -205,6 +205,7 @@ class Game {
 				let columnIndex = oneSpace[1];
 				board[rowIndex][columnIndex] = this.addColor(Color.BgCyan + Color.FgBlack, ships[i].initials, Color.Reset);
 			}
+			this.drawGameBoard(board);
 		}
 	}
 
@@ -232,17 +233,19 @@ class Game {
 			}
 			if (player2InternalBoard[rowIndex][columnIndex].includes("{")) {
 				player2ExternalBoard[rowIndex][columnIndex] = this.addColor(Color.BgRed + Color.FgBlack, "[X]", Color.Reset);
-				player2InternalBoard[rowIndex][columnIndex] = this.addColor(Color.BgRed + Color.FgBlack, "[X]", Color.Reset);
 				this.drawGameBoard(player2ExternalBoard);
 				console.log(this.addColor(Color.Bright, "HIT!", Color.Reset) + "\n");
+				this.trackScore(this.ships1, destroyedShips1, player2InternalBoard, rowIndex, columnIndex, playerOne, playerTwo);
+				player2InternalBoard[rowIndex][columnIndex] = this.addColor(Color.BgRed + Color.FgBlack, "[X]", Color.Reset);
 			}
 			else {
 				player2ExternalBoard[rowIndex][columnIndex] = this.addColor(Color.BgYellow + Color.FgBlack, "[0]", Color.Reset);
-				player2InternalBoard[rowIndex][columnIndex] = this.addColor(Color.BgYellow + Color.FgBlack, "[0]", Color.Reset);
 				this.drawGameBoard(player2ExternalBoard);
 				console.log(this.addColor(Color.Bright, "MISS!", Color.Reset) + "\n");
+				this.trackScore(this.ships1, destroyedShips1, player2InternalBoard, rowIndex, columnIndex, playerOne, playerTwo);
+				player2InternalBoard[rowIndex][columnIndex] = this.addColor(Color.BgYellow + Color.FgBlack, "[0]", Color.Reset);
 			}
-			this.trackScore(this.ships1, destroyedShips1, player2InternalBoard, rowIndex, columnIndex, playerOne, playerTwo);
+			
 			console.log("Current score for " + this.addColor(Color.FgGreen, playerOne.name, Color.Reset) + ": " + playerOne.score);
 			this.clearConsole();
 			if (playerOne.score === 4) {
@@ -268,17 +271,20 @@ class Game {
 			this.drawGameBoard(player1ExternalBoard);
 			if (player1InternalBoard[rowIndex][columnIndex].includes("{")) {
 				player1ExternalBoard[rowIndex][columnIndex] = this.addColor(Color.BgRed + Color.FgBlack, "[X]", Color.Reset);
-				player1InternalBoard[rowIndex][columnIndex] = this.addColor(Color.BgRed + Color.FgBlack, "[X]", Color.Reset);
 				this.drawGameBoard(player2ExternalBoard);
 				console.log(this.addColor(Color.Bright, "HIT!", Color.Reset) + "\n");
+				this.trackScore(this.ships2, destroyedShips2, player1InternalBoard, rowIndex, columnIndex, playerTwo, playerOne);
+				player1InternalBoard[rowIndex][columnIndex] = this.addColor(Color.BgRed + Color.FgBlack, "[X]", Color.Reset);
+				
 			}
 			else {
 				player1ExternalBoard[rowIndex][columnIndex] = this.addColor(Color.BgYellow + Color.FgBlack, "[0]", Color.Reset);
-				player1InternalBoard[rowIndex][columnIndex] = this.addColor(Color.BgYellow + Color.FgBlack, "[0]", Color.Reset);
 				this.drawGameBoard(player1ExternalBoard);
 				console.log(this.addColor(Color.Bright, "MISS!", Color.Reset) + "\n");
+				this.trackScore(this.ships2, destroyedShips2, player1InternalBoard, rowIndex, columnIndex, playerTwo, playerOne);
+				player1InternalBoard[rowIndex][columnIndex] = this.addColor(Color.BgYellow + Color.FgBlack, "[0]", Color.Reset);
+				
 			}
-			this.trackScore(this.ships2, destroyedShips2, player1InternalBoard, rowIndex, columnIndex, playerTwo, playerOne);
 			console.log("Current score for " + this.addColor(Color.FgBlue, playerTwo.name, Color.Reset) + ": " + playerTwo.score);
 			this.clearConsole();
 		}
