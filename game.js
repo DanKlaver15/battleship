@@ -52,15 +52,15 @@ class Game {
 		this.ships1 = [];
 		this.ships2 = [];
 
-		this.ships1.push(new Destroyer("Destroyer", "{D}", 2));	// this.ships[0]
-		this.ships1.push(new Submarine("Submarine", "{S}", 3));	// this.ships[1]
-		this.ships1.push(new Battleship("Battleship", "{B}", 4));	// this.ships[2]
-		this.ships1.push(new Carrier("Aircraft Carrier", "{AC}", 5));	// this.ships[3]
+		this.ships1.push(new Carrier("Aircraft Carrier", "{AC}", 5));
+		this.ships1.push(new Battleship("Battleship", "{B}", 4));
+		this.ships1.push(new Submarine("Submarine", "{S}", 3));
+		this.ships1.push(new Destroyer("Destroyer", "{D}", 2));
 
-		this.ships2.push(new Destroyer("Destroyer", "{D}", 2));	// this.ships[0]
-		this.ships2.push(new Submarine("Submarine", "{S}", 3));	// this.ships[1]
-		this.ships2.push(new Battleship("Battleship", "{B}", 4));	// this.ships[2]
-		this.ships2.push(new Carrier("Aircraft Carrier", "{AC}", 5));	// this.ships[3]
+		this.ships2.push(new Carrier("Aircraft Carrier", "{AC}", 5));
+		this.ships2.push(new Battleship("Battleship", "{B}", 4));
+		this.ships2.push(new Submarine("Submarine", "{S}", 3));
+		this.ships2.push(new Destroyer("Destroyer", "{D}", 2));
 	}
 
 	runGame() {
@@ -68,8 +68,16 @@ class Game {
 		console.log("Welcome to the game of Battleship!");
 		console.log("Player 1, please enter your name.");
 		this.playerOne = new Player(prompt(), Color.FgGreen);
+		while (this.playerOne.name.length === 0) {
+			console.log("Player 1, please enter your name.");
+			this.playerOne.name = prompt();
+		}
 		console.log("Player 2, please enter your name.");
 		this.playerTwo = new Player(prompt(), Color.FgBlue);
+		while (this.playerTwo.name.length === 0) {
+			console.log("Player 2, please enter your name.");
+			this.playerTwo.name = prompt();
+		}
 		console.log("Welcome " + this.addColor(Color.FgGreen, this.playerOne.name, Color.Reset) + " and " + this.addColor(Color.FgBlue, this.playerTwo.name, Color.Reset));
 
 		this.displayRules();
@@ -79,46 +87,20 @@ class Game {
 		let player1ExternalBoard = this.generateGameBoard();
 		let player2ExternalBoard = this.generateGameBoard();
 
-		// Literal values only here for testing
-		// player1InternalBoard[0][1] = "{AC}";
-		// player1InternalBoard[0][2] = "{AC}";
-		// player1InternalBoard[0][3] = "{AC}";
-		// player1InternalBoard[0][4] = "{AC}";
-		// player1InternalBoard[0][5] = "{AC}";
-		// player1InternalBoard[0][6] = "{B}";
-		// player1InternalBoard[0][7] = "{B}";
-		// player1InternalBoard[0][8] = "{B}";
-		// player1InternalBoard[0][9] = "{B}";
-		// player1InternalBoard[0][10] = "{S}";
-		// player1InternalBoard[0][11] = "{S}";
-		// player1InternalBoard[0][12] = "{S}";
-		// player1InternalBoard[0][13] = "{D}";
-		// player1InternalBoard[0][14] = "{D}";
+		// this.placeShip(this.ships1[3], this.playerOne, player1InternalBoard);
+		// this.placeShip(this.ships1[2], this.playerOne, player1InternalBoard);
+		// this.placeShip(this.ships1[1], this.playerOne, player1InternalBoard);
+		// this.placeShip(this.ships1[0], this.playerOne, player1InternalBoard);
+		// this.clearConsole();
+		// this.placeShip(this.ships2[3], this.playerTwo, player2InternalBoard);
+		// this.placeShip(this.ships2[2], this.playerTwo, player2InternalBoard);
+		// this.placeShip(this.ships2[1], this.playerTwo, player2InternalBoard);
+		// this.placeShip(this.ships2[0], this.playerTwo, player2InternalBoard);
+		// this.clearConsole();
 
-		// player2InternalBoard[1][1] = "{AC}";
-		// player2InternalBoard[1][2] = "{AC}";
-		// player2InternalBoard[1][3] = "{AC}";
-		// player2InternalBoard[1][4] = "{AC}";
-		// player2InternalBoard[1][5] = "{AC}";
-		// player2InternalBoard[1][6] = "{B}";
-		// player2InternalBoard[1][7] = "{B}";
-		// player2InternalBoard[1][8] = "{B}";
-		// player2InternalBoard[1][9] = "{B}";
-		// player2InternalBoard[1][10] = "{S}";
-		// player2InternalBoard[1][11] = "{S}";
-		// player2InternalBoard[1][12] = "{S}";
-		// player2InternalBoard[1][13] = "{D}";
-		// player2InternalBoard[1][14] = "{D}";
-
-		this.placeShip(this.ships1[3], this.playerOne, player1InternalBoard);
-		this.placeShip(this.ships1[2], this.playerOne, player1InternalBoard);
-		this.placeShip(this.ships1[1], this.playerOne, player1InternalBoard);
-		this.placeShip(this.ships1[0], this.playerOne, player1InternalBoard);
+		this.placeShips(this.ships1, this.playerOne, player1InternalBoard);
 		this.clearConsole();
-		this.placeShip(this.ships2[3], this.playerTwo, player2InternalBoard);
-		this.placeShip(this.ships2[2], this.playerTwo, player2InternalBoard);
-		this.placeShip(this.ships2[1], this.playerTwo, player2InternalBoard);
-		this.placeShip(this.ships2[0], this.playerTwo, player2InternalBoard);
+		this.placeShips(this.ships2, this.playerTwo, player2InternalBoard);
 		this.clearConsole();
 
 		this.playRounds(this.playerOne, this.playerTwo, player1ExternalBoard, player2ExternalBoard, player1InternalBoard, player2InternalBoard);
@@ -187,7 +169,9 @@ class Game {
 		console.log(output);
 	}
 
-	placeShip(ship, player, board) {
+	placeShips(ships, player, board) {
+		let regex1 = new RegExp (/^([A-T]([1-9]|[1][0-9]|[2][0]))\-/);
+		let regex2 = new RegExp (/\-([A-T]([1-9]|[1][0-9]|[2][0]))$/);
 		let spaceRegex = new RegExp(/[A-Z]|[0-9]+/g);
 		let nameColor = "";
 		if (player.name === this.playerOne.name) {
@@ -196,59 +180,31 @@ class Game {
 		else {
 			nameColor = Color.FgBlue;
 		}
-		let shipLocation = [];
-		this.drawGameBoard(board);
-		for (let i = 1; i <= ship.size; i++) {
-			console.log(this.addColor(nameColor, player.name, Color.Reset) + ", please choose space #" + i + " for your " + ship.name + " (" + ship.size + " spaces total) using the format 'A1' where the capital letter is the row and the number is the column.");
-			let response = this.validateFormat(prompt()).match(spaceRegex);
-			let rowIndex = this.findRow(response, board);
-			let columnIndex = response[1];
-			if (i === 1) {
-				while (!this.isFreeSpace(rowIndex, columnIndex, board)) {
-					console.log("This space has already been used.  Please choose a different one.");
-					response = this.validateFormat(prompt()).match(spaceRegex);
-					rowIndex = this.findRow(response, board);
-					columnIndex = response[1];
-				}
-			}
-			else if (i === 2) {
-				while (!this.isFreeSpace(rowIndex, columnIndex, board) || !this.isSpaceAdjacentToPrevious(shipLocation, response)) {
-					console.log("This space is unavailable.  Either it has already been used or it does not form a continuous line with your previous spaces for this ship. Please choose a different one.");
-					response = this.validateFormat(prompt()).match(spaceRegex);
-					rowIndex = this.findRow(response, board);
-					columnIndex = response[1];
-				}
-			}
-			else {
-				while (!this.isFreeSpace(rowIndex, columnIndex, board) || !this.isSpaceAdjacentToPrevious(shipLocation, response) || !this.isStraightLine(shipLocation, response)) {
-					console.log("This space is unavailable.  Either it has already been used or it does not form a continuous line with your previous spaces for this ship. Please choose a different one.");
-					response = this.validateFormat(prompt()).match(spaceRegex);
-					rowIndex = this.findRow(response, board);
-					columnIndex = response[1];
-				}
-			}
-			shipLocation.push(response);
-			board[rowIndex][columnIndex] = this.addColor(Color.BgCyan + Color.FgBlack, ship.initials, Color.Reset);
+		for (let i = 0; i < ships.length; i++) {
 			this.drawGameBoard(board);
-		}
-	}
-
-	testPlaceShip(ship, player, board) {
-		let regex1 = new RegExp (/^([A-T]([1-9]|[1][0-9]|[2][0]))\-/);
-		let regex2 = new RegExp (/\-([A-T]([1-9]|[1][0-9]|[2][0]))$/);
-		let spaceRegex = new RegExp(/[A-Z]|[0-9]+/g);
-		if (player.name === this.playerOne.name) {
-			nameColor = Color.FgGreen;
-		}
-		else {
-			nameColor = Color.FgBlue;
-		}
-		this.drawGameBoard(board);
-		for (let i = 1; i < ship.size; i++) {
-			console.log(this.addColor(nameColor, player.name, Color.Reset) + ", please choose a range of spaces for your " + ships.name + " (" + ships.size + " spaces total) using the format 'A1-A5' or 'B1-F5' that are located inside the board.");
-			let response1 = this.validateRange(prompt()).match(regex1)[1].match(spaceRegex);
-			let response2 = this.validateRange(prompt()).match(regex2)[1].match(spaceRegex);
-			
+			console.log(this.addColor(nameColor, player.name, Color.Reset) + ", please choose a range of spaces for your " + ships[i].name + " (" + ships[i].size + " spaces total) using the format 'A1-A5' or 'B10-F10' that are located inside the board.");
+			let response = this.validateRange(prompt());
+			let response1 = response.match(regex1)[1].match(spaceRegex);
+			let response2 = response.match(regex2)[1].match(spaceRegex);
+			let individualSpacesArr = this.convertRangeToSpaces(response1, response2);
+			while (!this.rangeEqualsShipSize(ships[i], individualSpacesArr) || !this.isFreeLocation(individualSpacesArr, board)) {
+				if (!this.rangeEqualsShipSize(ships[i], individualSpacesArr)) {
+					console.log("The range you entered does not match the ship size. Please enter a range of " + ships[i].size + " spaces that are not already occupied by another ship.");
+				}
+				else if (!this.isFreeLocation(individualSpacesArr, board)) {
+					console.log("The range you entered is not available. Please enter a range of " + ships[i].size + " spaces that are not already occupied by another ship.");
+				}
+				response = this.validateRange(prompt());
+				response1 = response.match(regex1)[1].match(spaceRegex);
+				response2 = response.match(regex2)[1].match(spaceRegex);
+				individualSpacesArr = this.convertRangeToSpaces(response1, response2);
+			}
+			for (let r = 0; r < individualSpacesArr.length; r++) {
+				let oneSpace = individualSpacesArr[r].match(spaceRegex);
+				let rowIndex = this.findRow(oneSpace, board);
+				let columnIndex = oneSpace[1];
+				board[rowIndex][columnIndex] = this.addColor(Color.BgCyan + Color.FgBlack, ships[i].initials, Color.Reset);
+			}
 		}
 	}
 
@@ -261,7 +217,7 @@ class Game {
 		while (playerOne.score < 4 && playerTwo.score < 4) {
 			// PLAYER 1
 			this.drawGameBoard(player1InternalBoard);
-			console.log(playerOne.name + " this is what your board currently looks like.");
+			console.log(this.addColor(Color.FgGreen, playerOne.name, Color.Reset) + " this is what your board currently looks like.");
 			this.clearConsole();
 			this.drawGameBoard(player2ExternalBoard);
 			console.log(this.addColor(Color.FgGreen, playerOne.name, Color.Reset) + " please select a space to attack.");
@@ -397,32 +353,22 @@ class Game {
 		}
 	}
 
-	isSpaceAdjacentToPrevious(array, response) {
-		let result = false;
-		for (let i = 0; (i < array.length && result === false); i++) {
-			if ((Math.abs(array[i][0].charCodeAt(0) - response[0].charCodeAt(0)) === 1 && array[i][1] == response[1]) || (Math.abs(array[i][1] - response[1]) == 1 && array[i][0].charCodeAt(0) === response[0].charCodeAt(0))) {
-				result = true;
+	isFreeLocation(array, board) {
+		let spaceRegex = new RegExp(/[A-Z]|[0-9]+/g);
+		let numberFalse = 0;
+		for (let i = 0; i < array.length; i++) {
+			let individualSpace = array[i].match(spaceRegex);
+			let rowIndex = this.findRow(individualSpace[0], board);
+			let columnIndex = individualSpace[1];
+			if (board[rowIndex][columnIndex].includes("{")) {
+				numberFalse++;
 			}
-			else {
-				result = false;
-			}
 		}
-		return result;
-	}
-
-	isStraightLine(array, response) {
-		let orientation = "";
-		if (array[0][0] === array[1][0]) {
-			orientation = "horizontal";
-		}
-		else if (array[0][0] !== array[1][0]) {
-			orientation = "vertical";
-		}
-		if ((orientation = "horizontal" && response[0] === array[0][0]) || (orientation = "vertical" && response[1] === array[0][1])) {
-			return true;
+		if (numberFalse > 0) {
+			return false;
 		}
 		else {
-			return false;
+			return true;
 		}
 	}
 
@@ -438,19 +384,57 @@ class Game {
 	validateRange(range) {
 		let regex1 = new RegExp (/^([A-T]([1-9]|[1][0-9]|[2][0]))\-/);
 		let regex2 = new RegExp (/\-([A-T]([1-9]|[1][0-9]|[2][0]))$/);
-		while (!regex1.test(range) && !regex2.test(range)) {
-			console.log("Your entry is invalid. Please enter a range of spaces in the format 'A1-A5' or 'B1-F5' that are located inside the board.");
+		while (!regex1.test(range) || !regex2.test(range)) {
+			console.log("Your entry is invalid. Please enter a range of spaces in the format 'A1-A5' or 'B10-F10' that are located inside the board.");
 			range = prompt();
 		}
 		return range;
 	}
 
-	rangeEqualsShipSize(ship, response1, response2) {
-		while (Math.abs(response1[0].charCodeAt(0) - response2[0].charCodeAt(0)) !== ship.size && respone1[1] !== response2[1] || Math.abs(response1[1] - response2[1]) !== ship.size && response1[0].charCodeAt(0) === response2[0].charCodeAt(0)) {
-			console.log("The range of values you entered is invalid. It must the size of your " + ship.name + "(" + ship.size + " spaces) in a vertical or horizontal line.");
+	rangeEqualsShipSize(ship, array) {
+		if (array.length !== ship.size) {
+			return false;
 		}
-		return true;
+		else {
+			return true;
 		}
+	}
+
+	convertRangeToSpaces(response1, response2) {
+		let individualSpaces = [];
+		if (response1[0].charCodeAt(0) === response2[0].charCodeAt(0) && response1[1] !== response2[1]) {
+			let difference = Math.abs(response1[1] - response2[1]) + 1;
+			if (response2[1] > response1[1]) {
+				for (let i = 0; i < difference; i++) {
+					individualSpaces.push(response1[0].charAt(0) + response1[1]);
+					response1[1]++;
+				} 
+			}
+			else if (response1[1] > response2[1]) {
+				for (let i = 0; i < difference; i++) {
+					individualSpaces.push(response1[0].charAt(0) + response2[1])
+					response2[1]++;
+				}
+			}
+		}
+		if (response1[0].charCodeAt(0) !== response2[0].charCodeAt(0) && response1[1] === response2[1]) {
+			let difference = Math.abs(response1[0].charCodeAt(0) - response2[0].charCodeAt(0)) + 1;
+			if (response2[0].charCodeAt(0) > response1[0].charCodeAt(0)) {
+				let startingLetter = response1[0].charCodeAt(0);
+				for (let i = 0; i < difference; i++) {
+					individualSpaces.push(String.fromCharCode(startingLetter) + response1[1]);
+					startingLetter++;
+				}
+			}
+			else if (response1[0].charCodeAt(0) > response2[0].charCodeAt(0)) {
+				let startingLetter = response2[0].charCodeAt(0);
+				for (let i = 0; i < difference; i++) {
+					individualSpaces.push(String.fromCharCode(startingLetter) + response1[1]);
+					startingLetter++;
+				}
+			}
+		}
+		return individualSpaces;
 	}
 
 
