@@ -88,8 +88,10 @@ class Game {
 		let player2ExternalBoard = this.generateGameBoard();
 
 		this.placeShips(this.ships1, this.playerOne, player1InternalBoard);
+		readlineSync.question("When you are finished reviewing the board, please hit enter.", {hideEchoBack: true, mask: ''});
 		this.clearConsole();
 		this.placeShips(this.ships2, this.playerTwo, player2InternalBoard);
+		readlineSync.question("When you are finished reviewing the board, please hit enter.", {hideEchoBack: true, mask: ''});
 		this.clearConsole();
 
 		this.playRounds(this.playerOne, this.playerTwo, player1ExternalBoard, player2ExternalBoard, player1InternalBoard, player2InternalBoard);
@@ -202,12 +204,14 @@ class Game {
 		let destroyedShips1 = [];
 		let destroyedShips2 = [];
 		let spaceRegex = new RegExp(/[A-Z]|[0-9]+/g);
-		console.log("All ships have been placed." + "\n");
+		readlineSync.question("All ships have been placed. " + this.addColor(Color.FgGreen, playerOne.name, Color.Reset) + " please press enter to begin your first round." + "\n", {hideEchoBack: true, mask: ''});
+		this.clearConsole();
 		
 		while (playerOne.score < 4 && playerTwo.score < 4) {
 			// PLAYER 1
 			this.drawGameBoard(player1InternalBoard);
 			console.log(this.addColor(Color.FgGreen, playerOne.name, Color.Reset) + " this is what your board currently looks like.");
+			readlineSync.question("When you are finished reviewing the board, please hit enter.", {hideEchoBack: true, mask: ''});
 			this.clearConsole();
 			this.drawGameBoard(player2ExternalBoard);
 			console.log(this.addColor(Color.FgGreen, playerOne.name, Color.Reset) + " please select a space to attack.");
@@ -234,17 +238,20 @@ class Game {
 				this.trackScore(this.ships1, destroyedShips1, player2InternalBoard, rowIndex, columnIndex, playerOne, playerTwo);
 				player2InternalBoard[rowIndex][columnIndex] = this.addColor(Color.BgYellow + Color.FgBlack, "[0]", Color.Reset);
 			}
-			
 			console.log("Current score for " + this.addColor(Color.FgGreen, playerOne.name, Color.Reset) + ": " + playerOne.score);
-			this.clearConsole();
 			if (playerOne.score === 4) {
 				console.log(this.addColor(Color.Bright, "Congratulations " + this.addColor(Color.FgGreen, playerOne.name, Color.Reset) + ". You won!" + "\r\n", Color.Reset));
 				return;
 			}
+			readlineSync.question("When you are finished with your turn, please hit Enter so " + this.addColor(Color.FgBlue, playerTwo.name, Color.Reset) + " can play.", {hideEchoBack: true, mask: ''});
+			this.clearConsole();
+			readlineSync.question(this.addColor(Color.FgBlue, playerTwo.name, Color.Reset) + " please hit Enter when you are ready to begin your turn.", {hideEchoBack: true, mask: ''});
+
 
 			// PLAYER 2
 			this.drawGameBoard(player2InternalBoard);
-			console.log(playerTwo.name + " this is what your board currently looks like.");
+			console.log(this.addColor(Color.FgBlue, playerTwo.name, Color.Reset) + " this is what your board currently looks like.");
+			readlineSync.question("When you are finished reviewing the board, please hit enter.", {hideEchoBack: true, mask: ''});
 			this.clearConsole();
 			this.drawGameBoard(player1ExternalBoard);
 			console.log(this.addColor(Color.FgBlue, playerTwo.name, Color.Reset) + " please select a space to attack.");
@@ -275,11 +282,13 @@ class Game {
 				
 			}
 			console.log("Current score for " + this.addColor(Color.FgBlue, playerTwo.name, Color.Reset) + ": " + playerTwo.score);
-			this.clearConsole();
-		}
-		if (playerTwo.score === 4) {
+			if (playerTwo.score === 4) {
 			console.log(this.addColor(Color.Bright, "Congratulations " + this.addColor(Color.FgGreen, playerTwo.name, Color.Reset) + ". You won!" + "\r\n", Color.Reset));
-			return;
+				return;
+			}
+			readlineSync.question("When you are finished with your turn, please hit Enter so " + this.addColor(Color.FgGreen, playerOne.name, Color.Reset) + " can play.", {hideEchoBack: true, mask: ''});
+			this.clearConsole();
+			readlineSync.question(this.addColor(Color.FgGreen, playerOne.name, Color.Reset)) + " please hit Enter when you are ready to begin your turn.", {hideEchoBack: true, mask: ''});
 		}
 	}
 
@@ -432,13 +441,11 @@ class Game {
 		return individualSpaces;
 	}
 
-
 	addColor(color, str, reset) {
 		return (color + str + reset);
 	}
 
 	clearConsole() {
-		readlineSync.question("When you are finished reviewing the board, please hit enter.", {hideEchoBack: true, mask: ''});
 		process.stdout.write("\u001b[3J\u001b[2J\u001b[1J");
 	}
 }
