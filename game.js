@@ -288,7 +288,7 @@ class Game {
 			}
 			readlineSync.question("When you are finished with your turn, please hit Enter so " + this.addColor(Color.FgGreen, playerOne.name, Color.Reset) + " can play.", {hideEchoBack: true, mask: ''});
 			this.clearConsole();
-			readlineSync.question(this.addColor(Color.FgGreen, playerOne.name, Color.Reset)) + " please hit Enter when you are ready to begin your turn.", {hideEchoBack: true, mask: ''});
+			readlineSync.question(this.addColor(Color.FgGreen, playerOne.name, Color.Reset) + " please hit Enter when you are ready to begin your turn.", {hideEchoBack: true, mask: ''});
 		}
 	}
 
