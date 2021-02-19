@@ -179,12 +179,7 @@ class Game {
 			let response2 = response.match(regex2)[1].match(spaceRegex);
 			let individualSpacesArr = this.convertRangeToSpaces(response1, response2);
 			while (!this.rangeEqualsShipSize(ships[i], individualSpacesArr) || !this.isFreeLocation(individualSpacesArr, board)) {
-				if (!this.rangeEqualsShipSize(ships[i], individualSpacesArr)) {
-					console.log("The range you entered does not match the ship size. Please enter a range of " + ships[i].size + " spaces that are not already occupied by another ship.");
-				}
-				else if (!this.isFreeLocation(individualSpacesArr, board)) {
-					console.log("The range you entered is not available. Please enter a range of " + ships[i].size + " spaces that are not already occupied by another ship.");
-				}
+				console.log("There is an error with the range you entered. Please enter a range of " + ships[i].size + " spaces that are not already occupied by another ship.");
 				response = this.validateRange(prompt());
 				response1 = response.match(regex1)[1].match(spaceRegex);
 				response2 = response.match(regex2)[1].match(spaceRegex);
@@ -349,11 +344,11 @@ class Game {
 	}
 
 	isFreeSpace(rowIndex, columnIndex, board) {
-		if (!board[rowIndex][columnIndex].includes("{")) {
-			return true;
+		if (board[rowIndex][columnIndex].includes("{")) {
+			return false;
 		}
 		else {
-			return false;
+			return true;
 		}
 	}
 
@@ -406,6 +401,8 @@ class Game {
 
 	convertRangeToSpaces(response1, response2) {
 		let individualSpaces = [];
+		response1[1] = parseInt(response1[1]);
+		response2[1] = parseInt(response2[1]);
 		if (response1[0].charCodeAt(0) === response2[0].charCodeAt(0) && response1[1] !== response2[1]) {
 			let difference = Math.abs(response1[1] - response2[1]) + 1;
 			if (response2[1] > response1[1]) {
