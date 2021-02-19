@@ -114,7 +114,8 @@ class Game {
 		readlineSync.question('Hit Enter key to continue.', {hideEchoBack: true, mask: ''});
 	}
 
-	generateGameBoard() {	// This is just a console.table display of the board created.  It shows indeces for each row/column
+	// This is just a console.table display of the board created.  It shows indeces for each row/column
+	generateGameBoard() {	
 		let gameBoard = [];
 		let rowArray = [];
 		let numRows = 20;
@@ -146,6 +147,7 @@ class Game {
 		return gameBoard;
 	}
 
+	// Determines the appearance of the board from the 'table' pacakge
 	drawGameBoard(board) {
 		let config, output;
 		config = {
@@ -160,6 +162,7 @@ class Game {
 		console.log(output);
 	}
 
+	// Alows the user to place each of their ships by entering a range (A1-A5).  It validates size of the range and open spaces
 	placeShips(ships, player, board) {
 		let regex1 = new RegExp (/^([A-T]([1-9]|[1][0-9]|[2][0]))\-/);
 		let regex2 = new RegExp (/\-([A-T]([1-9]|[1][0-9]|[2][0]))$/);
@@ -195,6 +198,7 @@ class Game {
 		}
 	}
 
+	// Alternating rounds for each player to shoot at the opposing ships and mark hits with a red 'X' and misses with a yellow '0'
 	playRounds(playerOne, playerTwo, player1ExternalBoard, player2ExternalBoard, player1InternalBoard, player2InternalBoard) {
 		let destroyedShips1 = [];
 		let destroyedShips2 = [];
@@ -287,6 +291,7 @@ class Game {
 		}
 	}
 
+	// Track score for each player by increasing increment in the ships.hits property until that value equals the lenght of the ship which then adds to the player's score property
 	trackScore(ships, destroyedShips, internalBoard, rowIndex, columnIndex, currentPlayer, opposingPlayer) {
 		for (let i = 0; i < ships.length; i++) {
 			if (internalBoard[rowIndex][columnIndex] === this.addColor(Color.BgCyan + Color.FgBlack, ships[i].initials, Color.Reset)) {
@@ -334,6 +339,7 @@ class Game {
 		}
 	}
 
+	// Finds the row for each space entered
 	findRow(response, board) {
 		for (let r = 0; r < board.length; r++) {
 			if (board[r][0] === response[0]) {
@@ -352,6 +358,7 @@ class Game {
 		}
 	}
 
+	// Determines if any of the spaces entered by the user has already been used
 	isFreeLocation(array, board) {
 		let spaceRegex = new RegExp(/[A-Z]|[0-9]+/g);
 		let numberFalse = 0;
