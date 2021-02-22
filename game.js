@@ -68,13 +68,13 @@ class Game {
 		console.log("Welcome to the game of Battleship!");
 		console.log("Player 1, please enter your name.");
 		this.playerOne = new Player(prompt(), Color.FgGreen);
-		while (this.playerOne.name.length === 0) {
+		while (this.playerOne.name === "") {
 			console.log("Player 1, please enter your name.");
 			this.playerOne.name = prompt();
 		}
 		console.log("Player 2, please enter your name.");
 		this.playerTwo = new Player(prompt(), Color.FgBlue);
-		while (this.playerTwo.name.length === 0) {
+		while (this.playerTwo.name === "") {
 			console.log("Player 2, please enter your name.");
 			this.playerTwo.name = prompt();
 		}
